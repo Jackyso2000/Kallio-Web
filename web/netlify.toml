@@ -1,0 +1,8 @@
+# Global build settings
+[build]
+  # This is the build command Netlify will run
+  command = "npm run build"
+  # This is the directory that contains the built site
+  publish = ".next"
+  # This is the base directory, where your web project lives
+  base = "web"
