@@ -1,8 +1,13 @@
-// c:\Users\WiFi 6 Testing\Desktop\Kallio\web\components\Header.tsx
+"use client"
+
 import { Search, ShoppingCart, Menu } from 'lucide-react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
+import { useState } from 'react'
 
 export default function Header() {
+  const router = useRouter()
+  const [searchTerm, setSearchTerm] = useState('')
   return (
     <header className="absolute top-0 left-0 right-0 z-10 bg-brand-bg/90 backdrop-blur-sm">
       <div className="container mx-auto px-4">
@@ -30,7 +35,18 @@ export default function Header() {
           {/* Right side: Icons and Search */}
           <div className="flex items-center gap-6">
             <div className="hidden md:flex items-center border border-brand-text rounded-full px-3 py-1">
-              <input type="text" placeholder="Search" className="bg-transparent text-sm outline-none placeholder:text-brand-text/70" />
+              <input
+                type="text"
+                placeholder="Search"
+                className="bg-transparent text-sm outline-none placeholder:text-brand-text/70"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && searchTerm.trim()) {
+                    router.push(`/search?q=${encodeURIComponent(searchTerm.trim())}`)
+                  }
+                }}
+              />
               <Search size={16} className="text-brand-text" />
             </div>
             {/* Mobile Cart Icon */}

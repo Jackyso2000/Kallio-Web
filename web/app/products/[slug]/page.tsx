@@ -32,7 +32,7 @@ const PRODUCT_QUERY = `*[_type == "product" && slug.current == $slug][0]{
   colors
 }`
 
-export default async function ProductPage(props: { params: { slug: string } }) {
+export default async function ProductPage(props: { params: Promise<{ slug: string }> }) {
   const { slug } = await props.params;
 
   const product = await client.fetch<ProductDetails>(
