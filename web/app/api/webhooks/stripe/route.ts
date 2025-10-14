@@ -3,7 +3,7 @@ import { Stripe } from 'stripe'
 import { client } from '@/sanity/client'
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: '2024-04-10',
+  apiVersion: '2025-09-30.clover',
 })
 
 const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET!
@@ -19,7 +19,20 @@ export async function POST(req: NextRequest) {
       const session = event.data.object as Stripe.Checkout.Session
 
       const { userId, cartItems } = session.metadata!
-      const shippingDetails = session.shipping_details!
+      const shippingDetails = (session as Stripe.Checkout.Session & {
+  shipping_details: {
+    name: string | null;
+    address: {
+      city: string | null;
+      country: string | null;
+      line1: string | null;
+      line2: string | null;
+      postal_code: string | null;
+      state: string | null;
+    } | null;
+  };
+}).shipping_details;
+
       const totalAmount = session.amount_total! / 100 // Convert from cents
 
       const order = {
