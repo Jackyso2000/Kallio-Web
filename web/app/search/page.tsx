@@ -35,11 +35,14 @@ const SORT_ORDERS: Record<string, string> = {
 export default async function SearchPage({
   searchParams,
 }: {
-  searchParams: { q?: string; sort?: string; category?: string }
+  searchParams: Promise<{ q?: string; sort?: string; category?: string }>
 }) {
-  const query = searchParams.q || ''
-  const sorts = searchParams.sort || 'relevance'
-  const categorySlug = searchParams.category || ''
+
+ const { q, sort, category } = await searchParams
+
+  const query = q || ''
+  const sorts = sort || 'relevance'
+  const categorySlug = category || ''
 
   const order = SORT_ORDERS[sorts] || SORT_ORDERS.relevance
 
