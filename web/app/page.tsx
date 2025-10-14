@@ -1,74 +1,66 @@
-import Header from '@/components/Header'
-import Hero from '@/components/Hero'
-import Footer from '@/components/Footer'
-import ProductCard from '@/components/ProductCard'
+import Layout from '@/components/Layout'
 import { client } from '@/sanity/client'
-import type { Product } from '@/types/product'
 import type { Image as SanityImage } from 'sanity'
+import Image from 'next/image'
+import Link from 'next/link'
+import imageUrlBuilder from '@sanity/image-url'
+import ProductCard from '@/components/ProductCard'
+import type { Product } from '@/types/product'
 
-const HERO_QUERY = `*[_type == "hero" && defined(backgroundImage.asset)][0]`
-const FEATURED_PRODUCTS_QUERY = `*[_type == "product" && featured == true]{
-  _id,
-  name,
-  slug,
-  price,
-  "mainImage": images[0]
-}`
-
-interface HeroData {
+interface Hero {
   pretitle: string
   title: string
   buttonText: string
   backgroundImage: SanityImage
 }
 
-async function getHeroData() {
-  return client.fetch<HeroData>(HERO_QUERY, {}, { next: { tags: ['hero'] } })
-}
+const HERO_QUERY = `*[_type == "hero" && _id == "hero-homepage"][0]`
+const FEATURED_PRODUCTS_QUERY = `*[_type == "product" && featured == true]{
+  _id, name, slug, price, "mainImage": images[0]
+}`
 
-async function getFeaturedProducts() {
-  return client.fetch<Product[]>(FEATURED_PRODUCTS_QUERY, {}, { next: { tags: ['product'] } })
-}
+const builder = imageUrlBuilder(client)
 
 export default async function Home() {
-  // Fetch data in parallel
-  const [heroData, featuredProducts] = await Promise.all([
-    getHeroData(),
-    getFeaturedProducts(),
+  const [hero, featuredProducts] = await Promise.all([
+    client.fetch<Hero>(HERO_QUERY),
+    client.fetch<Product[]>(FEATURED_PRODUCTS_QUERY),
   ])
 
   return (
-    <>
-      <Header />
-      <main>
-        {heroData && <Hero {...heroData} />}
-
-        {/* Featured Products Section */}
-        {featuredProducts && featuredProducts.length > 0 && (
-          <section className="container mx-auto px-4 py-24">
-            <h2 className="text-3xl font-light text-center mb-12">Featured Products</h2>
-            <div className="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 xl:gap-x-8">
-              {featuredProducts.map((product) => (
-                <ProductCard key={product._id} product={product} />
-              ))}
-            </div>
-          </section>
+    <Layout>
+      {/* Hero Section */}
+      <div className="relative h-screen bg-brand-bg text-white">
+        {hero?.backgroundImage && (
+          <Image
+            src={builder.image(hero.backgroundImage).url()}
+            alt="Hero background"
+            layout="fill"
+            objectFit="cover"
+            className="opacity-20"
+            priority
+          />
         )}
+        <div className="relative z-10 flex flex-col items-center justify-center h-full text-center px-4">
+          <span className="text-lg font-light tracking-widest uppercase">{hero?.pretitle}</span>
+          <h1 className="text-5xl md:text-7xl font-light mt-4">{hero?.title}</h1>
+          <Link href="/catalog" className="mt-8 px-8 py-3 border border-white rounded-full hover:bg-white hover:text-black transition-colors">
+            {hero?.buttonText}
+          </Link>
+        </div>
+      </div>
 
-        {/* Talk About Your Brand Section */}
-        <section className="bg-black py-24 text-brand-text">
-          <div className="container mx-auto px-4 text-center max-w-2xl">
-            <h2 className="text-3xl font-light mb-4">
-              Designed for Modern Living
-            </h2>
-            <p className="opacity-80">
-              At Kallio, we believe furniture should be as dynamic as the life you live.
-              We craft adaptable, modern pieces with timeless appeal, designed for those who appreciate beautiful spaces and the freedom to evolve.
-            </p>
+      {/* Featured Products Section */}
+      <div className="bg-brand-bg py-24">
+        <div className="container mx-auto px-4">
+          <h2 className="text-3xl font-light text-center mb-12">Featured Products</h2>
+          <div className="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 xl:gap-x-8">
+            {featuredProducts.map((product) => (
+              <ProductCard key={product._id} product={product} />
+            ))}
           </div>
-        </section>
-      </main>
-      <Footer />
-    </>
+        </div>
+      </div>
+    </Layout>
   )
 }

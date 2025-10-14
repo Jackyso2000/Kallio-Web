@@ -1,12 +1,16 @@
+'use client'
+
 import { client } from '@/sanity/client'
 import type { Image as SanityImage } from 'sanity'
 import imageUrlBuilder from '@sanity/image-url'
 import Image from 'next/image'
 import Layout from '@/components/Layout'
+import { useCart } from '@/contexts/CartContext'
 
 interface ProductDetails {
   _id: string
   name: string
+  slug: { current: string }
   details: string
   price: number
   images: SanityImage[]
@@ -25,6 +29,7 @@ const PRODUCT_QUERY = `*[_type == "product" && slug.current == $slug][0]{
   _id,
   name,
   details,
+  slug,
   price,
   images,
   colors
@@ -32,6 +37,7 @@ const PRODUCT_QUERY = `*[_type == "product" && slug.current == $slug][0]{
 
 export default async function ProductPage({ params }: { params: { slug: string } }) {
   const product = await client.fetch<ProductDetails>(PRODUCT_QUERY, { slug: params.slug })
+  const { addToCart } = useCart()
 
   if (!product) {
     // In a real app, you'd want a proper 404 page here
@@ -86,10 +92,21 @@ export default async function ProductPage({ params }: { params: { slug: string }
 
               <div className="mt-8">
                 <h3 className="text-sm font-medium text-gray-900">Details</h3>
-                <p className="mt-2 text-base text-gray-600 whitespace-pre-wrap">{product.details}</p>
+                <p className="mt-2 text-base text-brand-text/80 whitespace-pre-wrap">{product.details}</p>
               </div>
 
-              <button className="mt-10 w-full bg-brand-text text-white py-3 px-8 rounded-full hover:opacity-90 transition-opacity">
+              <button
+                onClick={() =>
+                  addToCart({
+                    id: product._id,
+                    name: product.name,
+                    price: product.price,
+                    image: builder.image(product.images[0]).width(100).height(100).url(),
+                    slug: product.slug.current,
+                  })
+                }
+                className="mt-10 w-full bg-brand-text text-white py-3 px-8 rounded-full hover:opacity-90 transition-opacity"
+              >
                 Add to Cart
               </button>
             </div>

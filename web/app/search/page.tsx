@@ -35,12 +35,11 @@ const SORT_ORDERS: Record<string, string> = {
 export default async function SearchPage({
   searchParams,
 }: {
-  searchParams: Promise<{ q?: string; sort?: string; category?: string }>
+  searchParams: { q?: string; sort?: string; category?: string }
 }) {
-  const { q, sort, category} = await searchParams;
-  const query = q || ''
-  const sorts = sort || 'relevance'
-  const categorySlug = category || ''
+  const query = searchParams.q || ''
+  const sorts = searchParams.sort || 'relevance'
+  const categorySlug = searchParams.category || ''
 
   const order = SORT_ORDERS[sorts] || SORT_ORDERS.relevance
 
@@ -51,7 +50,6 @@ export default async function SearchPage({
 const SEARCH_QUERY_WITH_FILTERS = `*[_type == "product" && (name match $searchTerm || details match $searchTerm) ${categoryFilter}] | order(${order}) {
   _id, name, slug, price, "mainImage": images[0]
 }`
-
 
 const fetchParams: { searchTerm: string; categorySlug?: string } = {
   searchTerm: `${query}*`,

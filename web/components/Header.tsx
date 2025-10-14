@@ -4,12 +4,16 @@ import { Search, ShoppingCart, Menu } from 'lucide-react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
+import { useCart } from '@/contexts/CartContext'
+import { SignInButton, SignUpButton, UserButton, SignedIn, SignedOut } from '@clerk/nextjs'
 
 export default function Header() {
   const router = useRouter()
   const [searchTerm, setSearchTerm] = useState('')
+  const { cartCount } = useCart()
+
   return (
-    <header className="absolute top-0 left-0 right-0 z-10 bg-brand-bg/90 backdrop-blur-sm">
+    <header className="absolute top-0 left-0 right-0 z-30 bg-brand-bg/90 backdrop-blur-sm">
       <div className="container mx-auto px-4">
         <div className="flex justify-between items-center h-24">
           {/* Left side: Nav for larger screens */}
@@ -49,10 +53,23 @@ export default function Header() {
               />
               <Search size={16} className="text-brand-text" />
             </div>
-            {/* Mobile Cart Icon */}
-            <div className="md:hidden">
-                <ShoppingCart className="text-brand-text" />
-            </div>
+            {/* Cart Icon */}
+            <Link href="/cart" className="relative">
+              <ShoppingCart className="text-brand-text" />
+              {cartCount > 0 && (
+                <span className="absolute -top-2 -right-2 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-xs text-white">
+                  {cartCount}
+                </span>
+              )}
+            </Link>
+            <SignedIn>
+              {/* Mount the UserButton component */}
+              <UserButton afterSignOutUrl="/" />
+            </SignedIn>
+            <SignedOut>
+              {/* Signed out users get sign in button */}
+              <SignInButton />
+            </SignedOut>
           </div>
         </div>
       </div>
