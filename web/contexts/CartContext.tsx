@@ -75,7 +75,8 @@ export function CartProvider({ children }: { children: ReactNode }) {
   )
 
   const clearCart = useCallback(() => {
-    setCart([])
+    setCart([]);
+    localStorage.removeItem('kallio_cart');
   }, [])
 
   const cartCount = cart.reduce((count, item) => count + item.quantity, 0)

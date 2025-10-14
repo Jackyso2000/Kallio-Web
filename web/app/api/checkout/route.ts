@@ -5,7 +5,7 @@ import { auth } from '@clerk/nextjs/server'
 
 // Initialize Stripe with your secret key
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: '2025-09-30.clover',
+    apiVersion: '2025-09-30.clover',
 })
 
 export async function POST(req: NextRequest) {
@@ -48,6 +48,7 @@ export async function POST(req: NextRequest) {
             phone_number_collection: {
                 enabled: true,
             },
+            expand: ['payment_intent'],
 
             // 👇 Collect customer name
             customer_creation: 'always', // or 'if_required'
