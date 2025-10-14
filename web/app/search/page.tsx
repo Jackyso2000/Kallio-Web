@@ -35,12 +35,14 @@ const SORT_ORDERS: Record<string, string> = {
 export default async function SearchPage({
   searchParams,
 }: {
-  searchParams: { q?: string; sort?: string; category?: string }
+  searchParams: Promise<{ q?: string; sort?: string; category?: string }>
 }) {
-  const query = searchParams.q || ''
-  const sort = searchParams.sort || 'relevance'
-  const categorySlug = searchParams.category || ''
-  const order = SORT_ORDERS[sort] || SORT_ORDERS.relevance
+  const { q, sort, category} = await searchParams;
+  const query = q || ''
+  const sorts = sort || 'relevance'
+  const categorySlug = category || ''
+
+  const order = SORT_ORDERS[sorts] || SORT_ORDERS.relevance
 
   const categoryFilter = categorySlug
     ? `&& references(*[_type=="category" && slug.current == $categorySlug][0]._id)`
