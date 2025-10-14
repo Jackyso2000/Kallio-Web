@@ -48,14 +48,23 @@ export default async function SearchPage({
     ? `&& references(*[_type=="category" && slug.current == $categorySlug][0]._id)`
     : ''
 
-  const SEARCH_QUERY_WITH_FILTERS = `*[_type == "product" && (name match $query || details match $query) ${categoryFilter}] | order(${order}) {
-    _id, name, slug, price, "mainImage": images[0]
-  }`
+const SEARCH_QUERY_WITH_FILTERS = `*[_type == "product" && (name match $searchTerm || details match $searchTerm) ${categoryFilter}] | order(${order}) {
+  _id, name, slug, price, "mainImage": images[0]
+}`
+
+
+const fetchParams: { searchTerm: string; categorySlug?: string } = {
+  searchTerm: `${query}*`,
+}
+if (categorySlug) {
+  fetchParams.categorySlug = categorySlug
+}
+
 
   const [products, categories] = await Promise.all([
     client.fetch<Product[]>(
       SEARCH_QUERY_WITH_FILTERS,
-      { query: `${query}*`, categorySlug }, // Use wildcard for partial matching
+      fetchParams,
       {
         next: {
           // Revalidate every 60 seconds
