@@ -20,8 +20,8 @@ const CATEGORY_PRODUCTS_QUERY = `*[_type == "category" && slug.current == $slug]
   }
 }`
 
-export default async function CategoryPage({ params }: { params: { slug: string } }) {
-  const { slug } = params;
+export default async function CategoryPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
 
   const category = await client.fetch<CategoryDetails>(
     CATEGORY_PRODUCTS_QUERY,
