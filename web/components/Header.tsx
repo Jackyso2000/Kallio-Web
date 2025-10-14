@@ -1,6 +1,6 @@
 <<<<<<< HEAD
 // c:\Users\WiFi 6 Testing\Desktop\Kallio\web\components\Header.tsx
-import { Search, ShoppingCart, Menu } from 'lucide-react'
+import { Search, ShoppingCart, User, Menu } from 'lucide-react'
 import Link from 'next/link'
 =======
 // kallio-design/web/components/Header.tsx
