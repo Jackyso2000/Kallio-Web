@@ -9,9 +9,10 @@ export default function PrivacyPolicyPage() {
           <div className="space-y-4 prose prose-lg max-w-none text-brand-text">
             <p>Last updated: {new Date().toLocaleDateString()}</p>
             <p>
-              Kallio Design ("us", "we", or "our") operates the Kallio Design website (the "Service").
-              This page informs you of our policies regarding the collection, use, and disclosure of
-              personal data when you use our Service and the choices you have associated with that
+              Kallio Design (&quot;us&quot;, &quot;we&quot;, or &quot;our&quot;) operates the Kallio
+              Design website (the &quot;Service&quot;). This page informs you of our policies
+              regarding the collection, use, and disclosure of personal data when you use our
+              Service and the choices you have associated with that
               data.
             </p>
             <h2 className="text-2xl font-light pt-4">Information Collection and Use</h2>

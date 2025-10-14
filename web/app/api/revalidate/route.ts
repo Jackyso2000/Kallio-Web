@@ -31,9 +31,11 @@ export async function POST(req: NextRequest) {
       now: Date.now(),
       body,
     })
-  } catch (err: any) {
+  } catch (err) {
     console.error(err)
-    return new Response(err.message, { status: 500 })
+    if (err instanceof Error) {
+      return new Response(err.message, { status: 500 })
+    }
+    return new Response('An unknown error occurred', { status: 500 })
   }
 }
-

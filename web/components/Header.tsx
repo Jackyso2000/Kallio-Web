@@ -1,5 +1,5 @@
 // c:\Users\WiFi 6 Testing\Desktop\Kallio\web\components\Header.tsx
-import { Search, ShoppingCart, User, Menu } from 'lucide-react'
+import { Search, ShoppingCart, Menu } from 'lucide-react'
 import Link from 'next/link'
 
 export default function Header() {
