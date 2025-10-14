@@ -85,10 +85,10 @@ export default async function ProductPage(props: { params: { slug: string } }) {
             {/* Product Info */}
             <div className="pt-4">
               <h1 className="text-3xl font-light text-brand-text">{product.name}</h1>
-              <p className="text-2xl mt-2 text-black">${product.price}</p>
+              <p className="text-2xl mt-2 text-white">RM{product.price}.00</p>
 
               <div className="mt-6">
-                <h3 className="text-sm font-medium text-black">Colors</h3>
+                <h3 className="text-sm font-medium text-white">Colors</h3>
                 <div className="flex items-center space-x-3 mt-2">
                   {product.colors?.map((color) => (
                     <span
