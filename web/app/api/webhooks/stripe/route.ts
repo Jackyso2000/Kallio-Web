@@ -14,31 +14,24 @@ export async function POST(req: NextRequest) {
     const sig = req.headers.get('stripe-signature')!
 
     const event = stripe.webhooks.constructEvent(body, sig, webhookSecret)
-    console.log('Stripe event constructed:', event.type)
 
     if (event.type === 'checkout.session.completed') {
-      const session = event.data.object as Stripe.Checkout.Session & {
-        payment_intent: Stripe.PaymentIntent
-      }
-
-      const paymentIntent = session.payment_intent as Stripe.PaymentIntent
-      const shipping = paymentIntent.shipping
-
+      const session = event.data.object as Stripe.Checkout.Session
       const { userId, cartItems } = session.metadata!
-      const totalAmount = session.amount_total! / 100
-      console.log('Processing checkout.session.completed event...')
+      const shippingDetails = session.shipping_details
+      const totalAmount = session.amount_total! / 100 // Convert from cents
 
       const order = {
         _type: 'order',
         userId,
-        userName: shipping?.name,
-        stripePaymentId: session.payment_intent?.toString(),
+        userName: shippingDetails.name,
+        stripePaymentId: session.payment_intent as string,
         totalAmount,
         shippingAddress: [
-          shipping?.address?.line1,
-          shipping?.address?.line2,
-          `${shipping?.address?.city}, ${shipping?.address?.state} ${shipping?.address?.postal_code}`,
-          shipping?.address?.country,
+          shippingDetails?.address?.line1,
+          shippingDetails?.address?.line2,
+          `${shippingDetails?.address?.city}, ${shippingDetails?.address?.state} ${shippingDetails?.address?.postal_code}`,
+          shippingDetails?.address?.country,
         ]
           .filter(Boolean)
           .join('\n'),
@@ -46,9 +39,7 @@ export async function POST(req: NextRequest) {
         status: 'Pending',
       }
 
-      console.log('Creating order in Sanity:', order)
-      const createdOrder = await client.create(order)
-      console.log('Order created successfully in Sanity:', createdOrder._id)
+      await client.create(order)
     }
 
     return NextResponse.json({ received: true })
