@@ -1,4 +1,4 @@
-import Layout from '@/components/Layout'
+import Header from '@/components/Header'
 import ProductCard from '@/components/ProductCard'
 import { client } from '@/sanity/client'
 import type { Product } from '@/types/product'
@@ -20,13 +20,11 @@ const CATEGORY_PRODUCTS_QUERY = `*[_type == "category" && slug.current == $slug]
   }
 }`
 
-export default async function CategoryPage(props: { params: { slug: string } }) {
-  const { slug } = await props.params;
-  // or if `params` doesn't need to be awaited, just:
+export default async function CategoryPage({ params }: { params: { slug: string } }) {
   const category = await client.fetch<CategoryDetails>(
     CATEGORY_PRODUCTS_QUERY,
-    { slug },
-    { next: { tags: [`category:${slug}`] } }
+    { slug: params.slug },
+    { next: { tags: [`category:${params.slug}`] } }
   )
 
   if (!category) {
@@ -34,8 +32,9 @@ export default async function CategoryPage(props: { params: { slug: string } }) 
   }
 
   return (
-    <Layout>
-      <div className="min-h-screen">
+    <>
+      <Header />
+      <main className="min-h-screen">
         <div className="container mx-auto px-4 py-32">
           <h1 className="text-4xl font-light mb-8">
             {category.title}
@@ -46,7 +45,7 @@ export default async function CategoryPage(props: { params: { slug: string } }) 
             ))}
           </div>
         </div>
-      </div>
-    </Layout>
+      </main>
+    </>
   )
 }
