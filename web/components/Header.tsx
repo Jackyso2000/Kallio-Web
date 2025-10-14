@@ -1,6 +1,6 @@
 "use client"
 
-import { Search, ShoppingCart, Menu } from 'lucide-react'
+import { Search, ShoppingCart, Menu, X } from 'lucide-react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
@@ -10,10 +10,11 @@ import { SignInButton, SignUpButton, UserButton, SignedIn, SignedOut } from '@cl
 export default function Header() {
   const router = useRouter()
   const [searchTerm, setSearchTerm] = useState('')
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const { cartCount } = useCart()
 
   return (
-    <header className="absolute top-0 left-0 right-0 z-30 bg-brand-bg/90 backdrop-blur-sm">
+    <>
       <div className="container mx-auto px-4">
         <div className="flex justify-between items-center h-24">
           {/* Left side: Nav for larger screens */}
@@ -24,8 +25,10 @@ export default function Header() {
           </nav>
 
           {/* Mobile Menu Icon */}
-          <div className="md:hidden">
-            <Menu className="text-brand-text" />
+          <div className="md:hidden z-50">
+            <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
+              {isMobileMenuOpen ? <X className="text-brand-text" /> : <Menu className="text-brand-text" />}
+            </button>
           </div>
 
           {/* Center: Logo */}
@@ -73,6 +76,17 @@ export default function Header() {
           </div>
         </div>
       </div>
-    </header>
+
+      {/* Mobile Menu Panel */}
+      {isMobileMenuOpen && (
+        <div className="md:hidden fixed inset-0 z-40 bg-brand-bg/95 backdrop-blur-lg flex flex-col items-center justify-center">
+          <nav className="flex flex-col items-center gap-8">
+            <Link href="/" className="text-2xl text-brand-text hover:text-black" onClick={() => setIsMobileMenuOpen(false)}>Home</Link>
+            <Link href="/catalog" className="text-2xl text-brand-text hover:text-black" onClick={() => setIsMobileMenuOpen(false)}>Catalog</Link>
+            <Link href="/contact" className="text-2xl text-brand-text hover:text-black" onClick={() => setIsMobileMenuOpen(false)}>Contact</Link>
+          </nav>
+        </div>
+      )}
+    </>
   )
 }
