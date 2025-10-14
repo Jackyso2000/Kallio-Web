@@ -1,6 +1,6 @@
 'use client'
 
-import { ProductDetails } from './types'
+import type { ProductDetails } from './types'
 import { useCart } from '@/contexts/CartContext'
 import Image from 'next/image'
 import imageUrlBuilder from '@sanity/image-url'

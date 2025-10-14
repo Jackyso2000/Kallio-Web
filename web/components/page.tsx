@@ -2,7 +2,7 @@
 
 import { client } from '@/sanity/client'
 import type { Image as SanityImage } from 'sanity'
-import ProductDisplay from '@/components/ProductDisplay' // this will be our client component
+import ProductView from '@/components/ProductView' // this will be our client component
 import { notFound } from 'next/navigation'
 
 export interface ProductDetails {
@@ -30,5 +30,5 @@ export default async function ProductPage({ params }: { params: { slug: string }
 
   if (!product) return notFound()
 
-  return <ProductDisplay product={product} />
+  return <ProductView product={product} />
 }
