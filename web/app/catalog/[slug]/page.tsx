@@ -20,17 +20,17 @@ const CATEGORY_PRODUCTS_QUERY = `*[_type == "category" && slug.current == $slug]
   }
 }`
 
-export default async function CategoryPage(props: { params: { slug: string } }) {
-  const { slug } = await props.params;
-  // or if `params` doesn't need to be awaited, just:
+export default async function CategoryPage({ params }: { params: { slug: string } }) {
+  const { slug } = params;
+
   const category = await client.fetch<CategoryDetails>(
     CATEGORY_PRODUCTS_QUERY,
     { slug },
     { next: { tags: [`category:${slug}`] } }
-  )
+  );
 
   if (!category) {
-    return <div>Category not found</div>
+    return <div>Category not found</div>;
   }
 
   return (
@@ -48,5 +48,5 @@ export default async function CategoryPage(props: { params: { slug: string } }) 
         </div>
       </div>
     </Layout>
-  )
+  );
 }

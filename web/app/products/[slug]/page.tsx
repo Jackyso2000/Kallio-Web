@@ -15,7 +15,9 @@ interface ProductDetails {
 
 // This function tells Next.js which product pages to pre-build
 export async function generateStaticParams() {
-  const slugs = await client.fetch<string[]>(`*[_type == "product" && defined(slug.current)][].slug.current`)
+  const slugs = await client.fetch<string[]>(
+    `*[_type == "product" && defined(slug.current)][].slug.current`
+  )
   return slugs.map((slug) => ({ slug }))
 }
 
@@ -30,15 +32,17 @@ const PRODUCT_QUERY = `*[_type == "product" && slug.current == $slug][0]{
   colors
 }`
 
-export default async function ProductPage({ params }: { params: { slug: string } }) {
+export default async function ProductPage(props: { params: { slug: string } }) {
+  const { slug } = await props.params;
+
   const product = await client.fetch<ProductDetails>(
     PRODUCT_QUERY,
-    { slug: params.slug },
-    { next: { tags: [`product:${params.slug}`] } }
+    { slug },
+    { next: { tags: [`product:${slug}`] } }
   )
 
   if (!product) {
-    // In a real app, you'd want a proper 404 page here
+    // You can optionally use notFound() from next/navigation
     return <div>Product not found</div>
   }
 
@@ -62,7 +66,10 @@ export default async function ProductPage({ params }: { params: { slug: string }
               </div>
               <div className="grid grid-cols-4 gap-4">
                 {product.images.slice(0, 4).map((image, idx) => (
-                  <div key={idx} className="aspect-square w-full overflow-hidden rounded-lg bg-brand-bg">
+                  <div
+                    key={idx}
+                    className="aspect-square w-full overflow-hidden rounded-lg bg-brand-bg"
+                  >
                     <Image
                       src={builder.image(image).width(200).height(200).url()}
                       alt={`${product.name} thumbnail ${idx + 1}`}
@@ -84,14 +91,21 @@ export default async function ProductPage({ params }: { params: { slug: string }
                 <h3 className="text-sm font-medium text-black">Colors</h3>
                 <div className="flex items-center space-x-3 mt-2">
                   {product.colors?.map((color) => (
-                    <span key={color} className="px-3 py-1 text-sm border border-brand-text/50 rounded-full">{color}</span>
+                    <span
+                      key={color}
+                      className="px-3 py-1 text-sm border border-brand-text/50 rounded-full"
+                    >
+                      {color}
+                    </span>
                   ))}
                 </div>
               </div>
 
               <div className="mt-8">
                 <h3 className="text-sm font-medium text-black">Details</h3>
-                <p className="mt-2 text-base text-brand-text/80 whitespace-pre-wrap">{product.details}</p>
+                <p className="mt-2 text-base text-brand-text/80 whitespace-pre-wrap">
+                  {product.details}
+                </p>
               </div>
 
               <button className="mt-10 w-full bg-brand-text text-white py-3 px-8 rounded-full hover:opacity-90 transition-opacity">
