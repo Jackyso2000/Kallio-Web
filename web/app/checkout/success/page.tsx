@@ -10,7 +10,7 @@ export default function CheckoutSuccessPage() {
 
   useEffect(() => {
     clearCart()
-  }, [clearCart])
+  }, [])
 
   return (
     <Layout>
