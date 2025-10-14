@@ -1,3 +1,4 @@
+// kallio-design/web/tailwind.config.ts
 import type { Config } from 'tailwindcss'
 
 const config: Config = {
@@ -9,16 +10,11 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        'brand-bg': 'rgb(var(--brand-bg) / <alpha-value>)',
-        'brand-text': 'rgb(var(--brand-text) / <alpha-value>)',
-      },
-      fontFamily: {
-        sans: ['Manrope', 'sans-serif'],
-      },
+        'brand-bg': '#F1ECE8',
+        'brand-text': '#654534',
+      }
     },
   },
-  plugins: [
-    require('@tailwindcss/aspect-ratio'),
-  ],
+  plugins: [],
 }
 export default config
