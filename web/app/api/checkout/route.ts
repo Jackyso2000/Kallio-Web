@@ -5,12 +5,12 @@ import { auth } from '@clerk/nextjs/server'
 
 // Initialize Stripe with your secret key
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: '2024-04-10',
+  apiVersion: '2025-09-30.clover',
 })
 
 export async function POST(req: NextRequest) {
     try {
-        const { userId } = auth()
+        const { userId } = await auth()
         const cartItems = (await req.json()) as CartItem[]
 
         if (!cartItems || cartItems.length === 0) {
