@@ -1,5 +1,7 @@
 import Header from '@/components/Header'
 import ProductCard from '@/components/ProductCard'
+import ProductGrid from '@/components/ProductGrid'
+import Hero from '@/components/Hero'
 import { client } from '@/sanity/client'
 import type { Product } from '@/types/product'
 
@@ -7,9 +9,17 @@ interface CategoryDetails {
   title: string
   products: Product[]
 }
+interface HeroData {
+  pretitle: string
+  title: string
+  buttonText: string
+  backgroundImage: any
+}
 
 // This query fetches a category by its slug and all products associated with it.
-const CATEGORY_PRODUCTS_QUERY = `*[_type == "category" && slug.current == $slug][0]{
+const PAGE_QUERY = `{
+  "hero": *[_type == "hero"][0],
+  "category": *[_type == "category" && slug.current == $slug][0]{
   title,
   "products": *[_type == "product" && references(^._id)]{
     _id,
@@ -18,33 +28,34 @@ const CATEGORY_PRODUCTS_QUERY = `*[_type == "category" && slug.current == $slug]
     price,
     "mainImage": images[0]
   }
+}
 }`
 
 export default async function CategoryPage({ params }: { params: { slug: string } }) {
-  const category = await client.fetch<CategoryDetails>(
-    CATEGORY_PRODUCTS_QUERY,
+  // Assuming 'featured' is the slug for your main page category
+  const { hero, category } = await client.fetch<{ hero: HeroData; category: CategoryDetails }>(
+    PAGE_QUERY,
     { slug: params.slug },
     { next: { tags: [`category:${params.slug}`] } }
   )
 
-  if (!category) {
-    return <div>Category not found</div>
+  if (!hero && !category) {
+    return <div>Page data not found</div>
   }
 
   return (
     <>
       <Header />
+      {hero && (
+        <Hero pretitle={hero.pretitle} title={hero.title} buttonText={hero.buttonText} backgroundImage={hero.backgroundImage} />
+      )}
       <main className="min-h-screen">
-        <div className="container mx-auto px-4 py-32">
+        {category && <div className="container mx-auto px-4 py-32">
           <h1 className="text-4xl font-light mb-8">
             {category.title}
           </h1>
-          <div className="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 xl:gap-x-8">
-            {category.products.map((product) => (
-              <ProductCard key={product._id} product={product} />
-            ))}
-          </div>
-        </div>
+          <ProductGrid products={category.products} />
+        </div>}
       </main>
     </>
   )

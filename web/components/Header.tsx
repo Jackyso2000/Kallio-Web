@@ -1,11 +1,12 @@
 "use client"
 
 import { Search, ShoppingCart, Menu, X } from 'lucide-react'
+import { motion, AnimatePresence } from 'framer-motion'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { useCart } from '@/contexts/CartContext'
-import { SignInButton, SignUpButton, UserButton, SignedIn, SignedOut } from '@clerk/nextjs'
+import { SignInButton, UserButton, SignedIn, SignedOut } from '@clerk/nextjs'
 
 export default function Header() {
   const router = useRouter()
@@ -19,9 +20,9 @@ export default function Header() {
         <div className="flex justify-between items-center h-24">
           {/* Left side: Nav for larger screens */}
           <nav className="hidden md:flex items-center gap-8">
-            <Link href="/" className="text-sm text-brand-text hover:text-black">Home</Link>
-            <Link href="/catalog" className="text-sm text-brand-text hover:text-black">Catalog</Link>
-            <Link href="/contact" className="text-sm text-brand-text hover:text-black">Contact</Link>
+            <Link href="/" className="text-sm text-brand-text hover:text-white">Home</Link>
+            <Link href="/catalog" className="text-sm text-brand-text hover:text-white">Catalog</Link>
+            <Link href="/contact" className="text-sm text-brand-text hover:text-white">Contact</Link>
           </nav>
 
           {/* Mobile Menu Icon */}
@@ -66,27 +67,39 @@ export default function Header() {
               )}
             </Link>
             <SignedIn>
+              <Link href="/account/orders" className="hidden md:block text-sm text-brand-text hover:text-white">
+                My Orders
+              </Link>
               {/* Mount the UserButton component */}
               <UserButton afterSignOutUrl="/" />
             </SignedIn>
             <SignedOut>
-              {/* Signed out users get sign in button */}
-              <SignInButton />
+              <div className="[&>button]:text-sm [&>button]:text-brand-text [&>button]:px-4 [&>button]:py-2 [&>button]:rounded-full [&>button]:border [&>button]:border-brand-text/50 [&>button]:transition-colors [&>button]:hover:bg-brand-text [&>button]:hover:text-white">
+                <SignInButton />
+              </div>
             </SignedOut>
           </div>
         </div>
       </div>
 
       {/* Mobile Menu Panel */}
-      {isMobileMenuOpen && (
-        <div className="md:hidden fixed inset-0 z-40 bg-brand-bg/95 backdrop-blur-lg flex flex-col items-center justify-center">
+      <AnimatePresence>
+        {isMobileMenuOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: -50 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -50 }}
+            transition={{ duration: 0.3, ease: 'easeInOut' }}
+            className="md:hidden fixed inset-0 z-40 bg-brand-bg/95 backdrop-blur-lg flex flex-col items-center justify-center"
+          >
           <nav className="flex flex-col items-center gap-8">
             <Link href="/" className="text-2xl text-brand-text hover:text-black" onClick={() => setIsMobileMenuOpen(false)}>Home</Link>
             <Link href="/catalog" className="text-2xl text-brand-text hover:text-black" onClick={() => setIsMobileMenuOpen(false)}>Catalog</Link>
             <Link href="/contact" className="text-2xl text-brand-text hover:text-black" onClick={() => setIsMobileMenuOpen(false)}>Contact</Link>
           </nav>
-        </div>
-      )}
+          </motion.div>
+        )}
+      </AnimatePresence>
     </>
   )
 }

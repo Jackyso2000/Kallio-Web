@@ -1,3 +1,4 @@
+'use client'
 import Layout from '@/components/Layout'
 import { client } from '@/sanity/client'
 import type { Image as SanityImage } from 'sanity'
@@ -6,6 +7,7 @@ import Link from 'next/link'
 import imageUrlBuilder from '@sanity/image-url'
 import ProductCard from '@/components/ProductCard'
 import type { Product } from '@/types/product'
+import { motion } from 'framer-motion'
 
 interface Hero {
   pretitle: string
@@ -18,7 +20,20 @@ const HERO_QUERY = `*[_type == "hero" && _id == "hero-homepage"][0]`
 const FEATURED_PRODUCTS_QUERY = `*[_type == "product" && featured == true]{
   _id, name, slug, price, "mainImage": images[0]
 }`
+const heroContainerVariants = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.2,
+    },
+  },
+}
 
+const heroItemVariants = {
+  hidden: { opacity: 0, y: 20 },
+  show: { opacity: 1, y: 0, transition: { ease: 'easeOut', duration: 0.5 } },
+}
 const builder = imageUrlBuilder(client)
 
 export default async function Home() {
@@ -41,12 +56,23 @@ export default async function Home() {
             priority
           />
         )}
-        <div className="relative z-10 flex flex-col items-center justify-center h-full text-center px-4">
-          <span className="text-lg font-light tracking-widest uppercase">{hero?.pretitle}</span>
-          <h1 className="text-5xl md:text-7xl font-light mt-4">{hero?.title}</h1>
-          <Link href="/catalog" className="mt-8 px-8 py-3 border border-white rounded-full hover:bg-white hover:text-black transition-colors">
-            {hero?.buttonText}
-          </Link>
+        <div
+          className="relative z-10 flex flex-col items-center justify-center h-full text-center px-4"
+          variants={heroContainerVariants}
+          initial="hidden"
+          animate="show"
+        >
+          <motion.span variants={heroItemVariants} className="text-lg font-light tracking-widest uppercase">
+            {hero?.pretitle}
+          </motion.span>
+          <h1 variants={heroItemVariants} className="text-5xl md:text-7xl font-light mt-4">
+            {hero?.title}
+          </h1>
+          <div variants={heroItemVariants}>
+            <Link href="/catalog" className="mt-8 px-8 py-3 border border-white rounded-full hover:bg-white hover:text-black transition-colors">
+              {hero?.buttonText}
+            </Link>
+          </div>
         </div>
       </div>
 
