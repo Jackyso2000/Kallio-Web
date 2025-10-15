@@ -4,7 +4,7 @@ import type { Image as SanityImage } from 'sanity'
 import imageUrlBuilder from '@sanity/image-url'
 import ProductCard from '@/components/ProductCard'
 import type { Product } from '@/types/product'
-import HeroComponent from '@/components/Hero'
+import Hero from '@/components/Hero' // ✅ matches <Hero />
 
 interface Hero {
   pretitle: string
@@ -27,12 +27,12 @@ export default async function Home() {
 
   return (
     <Layout>
-      <HeroComponent
+      <Hero
         pretitle={hero?.pretitle}
         title={hero?.title}
         buttonText={hero?.buttonText}
         backgroundImage={hero?.backgroundImage}
-        backgroundImageUrl={hero?.backgroundImage ? builder.image(hero.backgroundImage).url() : ''}
+        backgroundImageUrl={builder.image(hero.backgroundImage).url()}
       />
 
       {/* Featured Products Section */}
