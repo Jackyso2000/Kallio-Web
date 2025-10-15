@@ -11,6 +11,7 @@ interface Hero {
   title: string
   buttonText: string
   backgroundImage: SanityImage
+  backgroundImageUrl: string
 }
 
 const HERO_QUERY = `*[_type == "hero" && _id == "hero-homepage"][0]`
