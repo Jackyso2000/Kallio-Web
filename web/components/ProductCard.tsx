@@ -32,7 +32,7 @@ export default function ProductCard({ product }: ProductCardProps) {
         />
       </div>
       <h3 className="mt-4 text-sm text-brand-text">{product.name}</h3>
-      <p className="mt-1 text-lg font-medium text-black">RM{product.price.toFixed(2)}</p>
+      <p className="mt-1 text-lg font-medium text-white">RM{product.price.toFixed(2)}</p>
       </Link>
     </motion.div>
   )

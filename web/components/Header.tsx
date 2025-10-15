@@ -74,9 +74,11 @@ export default function Header() {
               <UserButton afterSignOutUrl="/" />
             </SignedIn>
             <SignedOut>
-              <div className="[&>button]:text-sm [&>button]:text-brand-text [&>button]:px-4 [&>button]:py-2 [&>button]:rounded-full [&>button]:border [&>button]:border-brand-text/50 [&>button]:transition-colors [&>button]:hover:bg-brand-text [&>button]:hover:text-white">
-                <SignInButton />
-              </div>
+              <SignInButton>
+                <button className="text-sm text-brand-text px-4 py-2 border-brand-text/50 transition-colors hover:bg-brand-text hover:text-white cursor-pointer">
+                  Sign In
+                </button>
+              </SignInButton>
             </SignedOut>
           </div>
         </div>
@@ -92,11 +94,11 @@ export default function Header() {
             transition={{ duration: 0.3, ease: 'easeInOut' }}
             className="md:hidden fixed inset-0 z-40 bg-brand-bg/95 backdrop-blur-lg flex flex-col items-center justify-center"
           >
-          <nav className="flex flex-col items-center gap-8">
-            <Link href="/" className="text-2xl text-brand-text hover:text-black" onClick={() => setIsMobileMenuOpen(false)}>Home</Link>
-            <Link href="/catalog" className="text-2xl text-brand-text hover:text-black" onClick={() => setIsMobileMenuOpen(false)}>Catalog</Link>
-            <Link href="/contact" className="text-2xl text-brand-text hover:text-black" onClick={() => setIsMobileMenuOpen(false)}>Contact</Link>
-          </nav>
+            <nav className="flex flex-col items-center gap-8">
+              <Link href="/" className="text-2xl text-brand-text hover:text-black" onClick={() => setIsMobileMenuOpen(false)}>Home</Link>
+              <Link href="/catalog" className="text-2xl text-brand-text hover:text-black" onClick={() => setIsMobileMenuOpen(false)}>Catalog</Link>
+              <Link href="/contact" className="text-2xl text-brand-text hover:text-black" onClick={() => setIsMobileMenuOpen(false)}>Contact</Link>
+            </nav>
           </motion.div>
         )}
       </AnimatePresence>
