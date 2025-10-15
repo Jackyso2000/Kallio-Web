@@ -56,23 +56,12 @@ export default async function Home() {
             priority
           />
         )}
-        <div
-          className="relative z-10 flex flex-col items-center justify-center h-full text-center px-4"
-          variants={heroContainerVariants}
-          initial="hidden"
-          animate="show"
-        >
-          <motion.span variants={heroItemVariants} className="text-lg font-light tracking-widest uppercase">
-            {hero?.pretitle}
-          </motion.span>
-          <h1 variants={heroItemVariants} className="text-5xl md:text-7xl font-light mt-4">
-            {hero?.title}
-          </h1>
-          <div variants={heroItemVariants}>
-            <Link href="/catalog" className="mt-8 px-8 py-3 border border-white rounded-full hover:bg-white hover:text-black transition-colors">
-              {hero?.buttonText}
-            </Link>
-          </div>
+        <div className="relative z-10 flex flex-col items-center justify-center h-full text-center px-4">
+          <span className="text-lg font-light tracking-widest uppercase">{hero?.pretitle}</span>
+          <h1 className="text-5xl md:text-7xl font-light mt-4">{hero?.title}</h1>
+          <Link href="/catalog" className="mt-8 px-8 py-3 border border-white rounded-full hover:bg-white hover:text-black transition-colors">
+            {hero?.buttonText}
+          </Link>
         </div>
       </div>
 
