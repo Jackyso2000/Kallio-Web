@@ -1,4 +1,3 @@
-'use client'
 import Layout from '@/components/Layout'
 import { client } from '@/sanity/client'
 import type { Image as SanityImage } from 'sanity'
