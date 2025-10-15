@@ -4,6 +4,7 @@ import ProductGrid from '@/components/ProductGrid'
 import Hero from '@/components/Hero'
 import { client } from '@/sanity/client'
 import type { Product } from '@/types/product'
+import imageUrlBuilder from '@sanity/image-url'
 
 interface CategoryDetails {
   title: string
@@ -42,12 +43,13 @@ export default async function CategoryPage({ params }: { params: { slug: string 
   if (!hero && !category) {
     return <div>Page data not found</div>
   }
+const builder = imageUrlBuilder(client)
 
   return (
     <>
       <Header />
       {hero && (
-        <Hero pretitle={hero.pretitle} title={hero.title} buttonText={hero.buttonText} backgroundImage={hero.backgroundImage} />
+        <Hero pretitle={hero.pretitle} title={hero.title} buttonText={hero.buttonText} backgroundImage={hero.backgroundImage} backgroundImageUrl={builder.image(hero.backgroundImage).url()}/>
       )}
       <main className="min-h-screen">
         {category && <div className="container mx-auto px-4 py-32">
