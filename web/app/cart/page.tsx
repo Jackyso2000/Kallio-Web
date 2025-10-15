@@ -38,7 +38,7 @@ export default function CartPage() {
               <p className="text-xl text-brand-text mb-4">Your cart is empty.</p>
               <Link
                 href="/catalog"
-                className="bg-brand-text text-white py-3 px-8 rounded-full hover:opacity-90 transition-opacity"
+                className="mt-10 w-full bg-white text-black py-3 px-8 rounded-full hover:opacity-90 transition-opacity cursor-pointer"
               >
                 Continue Shopping
               </Link>
@@ -121,7 +121,7 @@ export default function CartPage() {
                     <button
                       onClick={handleCheckout}
                       disabled={isLoading}
-                      className="w-full bg-brand-text text-white py-3 px-8 rounded-full hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="mt-10 w-full bg-white text-black py-3 px-8 rounded-full hover:opacity-90 transition-opacity cursor-pointer"
                     >
                       {isLoading ? 'Processing...' : 'Proceed to Checkout'}
                     </button>

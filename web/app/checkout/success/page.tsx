@@ -20,7 +20,7 @@ export default function CheckoutSuccessPage() {
           <p className="text-lg text-brand-text mb-8">Your order has been placed successfully.</p>
           <Link
             href="/catalog"
-            className="bg-brand-text text-white py-3 px-8 rounded-full hover:opacity-90 transition-opacity"
+              className="mt-10 w-full bg-white text-black py-3 px-8 rounded-full hover:opacity-90 transition-opacity cursor-pointer"
           >
             Continue Shopping
           </Link>

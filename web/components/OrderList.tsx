@@ -109,7 +109,8 @@ export default function OrderList({ orders }: OrderListProps) {
                         </ul>
                     </div>
                     <div className="text-right mt-4">
-                        <button onClick={() => generateInvoice(order)} className="bg-black text-white px-4 py-2 rounded-md text-sm hover:bg-black/80">
+                        <button onClick={() => generateInvoice(order)} className="bg-white text-black px-4 py-2 rounded-full text-sm hover:bg-white/80 transition-opacity cursor-pointer">
+
                             Download Invoice
                         </button>
                     </div>

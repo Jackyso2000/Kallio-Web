@@ -1,12 +1,10 @@
 import Layout from '@/components/Layout'
 import { client } from '@/sanity/client'
 import type { Image as SanityImage } from 'sanity'
-import Image from 'next/image'
-import Link from 'next/link'
 import imageUrlBuilder from '@sanity/image-url'
 import ProductCard from '@/components/ProductCard'
 import type { Product } from '@/types/product'
-import { motion } from 'framer-motion'
+import HeroComponent from '@/components/Hero'
 
 interface Hero {
   pretitle: string
@@ -19,20 +17,6 @@ const HERO_QUERY = `*[_type == "hero" && _id == "hero-homepage"][0]`
 const FEATURED_PRODUCTS_QUERY = `*[_type == "product" && featured == true]{
   _id, name, slug, price, "mainImage": images[0]
 }`
-const heroContainerVariants = {
-  hidden: { opacity: 0 },
-  show: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.2,
-    },
-  },
-}
-
-const heroItemVariants = {
-  hidden: { opacity: 0, y: 20 },
-  show: { opacity: 1, y: 0, transition: { ease: 'easeOut', duration: 0.5 } },
-}
 const builder = imageUrlBuilder(client)
 
 export default async function Home() {
@@ -43,26 +27,13 @@ export default async function Home() {
 
   return (
     <Layout>
-      {/* Hero Section */}
-      <div className="relative h-screen bg-brand-bg text-white">
-        {hero?.backgroundImage && (
-          <Image
-            src={builder.image(hero.backgroundImage).url()}
-            alt="Hero background"
-            layout="fill"
-            objectFit="cover"
-            className="opacity-20"
-            priority
-          />
-        )}
-        <div className="relative z-10 flex flex-col items-center justify-center h-full text-center px-4">
-          <span className="text-lg font-light tracking-widest uppercase">{hero?.pretitle}</span>
-          <h1 className="text-5xl md:text-7xl font-light mt-4">{hero?.title}</h1>
-          <Link href="/catalog" className="mt-8 px-8 py-3 border border-white rounded-full hover:bg-white hover:text-black transition-colors">
-            {hero?.buttonText}
-          </Link>
-        </div>
-      </div>
+      <HeroComponent
+        pretitle={hero?.pretitle}
+        title={hero?.title}
+        buttonText={hero?.buttonText}
+        backgroundImage={hero?.backgroundImage}
+        backgroundImageUrl={hero?.backgroundImage ? builder.image(hero.backgroundImage).url() : ''}
+      />
 
       {/* Featured Products Section */}
       <div className="bg-brand-bg py-24">
