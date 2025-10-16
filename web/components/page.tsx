@@ -5,6 +5,14 @@ import type { Image as SanityImage } from 'sanity'
 import ProductView from '@/components/ProductView' // this will be our client component
 import { notFound } from 'next/navigation'
 
+interface Review {
+  _id: string
+  reviewerName: string
+  rating: number
+  comment: string
+  _createdAt: string
+}
+
 export interface ProductDetails {
   _id: string
   name: string
@@ -13,6 +21,7 @@ export interface ProductDetails {
   price: number
   images: SanityImage[]
   colors: string[]
+  reviews: Review[]
 }
 
 const PRODUCT_QUERY = `*[_type == "product" && slug.current == $slug][0]{

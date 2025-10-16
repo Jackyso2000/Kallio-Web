@@ -6,6 +6,8 @@ import { redirect } from 'next/navigation'
 
 interface OrderItem {
   name: string
+  productId: string
+  hasBeenReviewed: boolean
   quantity: number
   price: number
   image?: string
@@ -23,8 +25,15 @@ interface Order {
 }
 
 const ORDERS_QUERY = `*[_type == "order" && userId == $userId] | order(_createdAt desc) {
-  ...,
-  "items": items[]{..., "image": coalesce(^.items[@.id == id][0].image, '')}
+  _id,
+  _createdAt,
+  totalAmount,
+  stripePaymentId,
+  status,
+  userName,
+  shippingAddress,
+  "items": items[]{ name, quantity, price, "productId": coalesce(^.items[@.id == id][0].id, ''), "image": coalesce(^.items[@.id == id][0].image, '')}
+
 }`
 
 export default async function OrdersPage() {

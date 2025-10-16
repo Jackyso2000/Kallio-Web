@@ -1,27 +1,20 @@
 import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server'
-import { NextResponse } from 'next/server'
 
+// Define routes that are public and do not require authentication.
 const isPublicRoute = createRouteMatcher([
-  '/(.*)',
-  '/catalog',
+  '/',
   '/catalog/(.*)',
   '/products/(.*)',
   '/search',
   '/sign-in(.*)',
   '/sign-up(.*)',
-  '/api/webhooks/stripe', // Stripe webhook should be public
+  '/api/webhooks/stripe',
 ])
 
-export default clerkMiddleware(async (auth, request) => {
+export default clerkMiddleware((auth, request) => {
+  // Protect all routes that are not explicitly marked as public.
   if (!isPublicRoute(request)) {
-    // If the route is not public, check for authentication
-    const { userId } = await auth()
-    if (!userId) {
-      // If the user is not authenticated, redirect them to the sign-in page
-      const signInUrl = new URL('/sign-in', request.url)
-      signInUrl.searchParams.set('redirect_url', request.url)
-      return NextResponse.redirect(signInUrl)
-    }
+    auth.protect()
   }
 })
 

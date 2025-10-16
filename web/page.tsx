@@ -53,7 +53,7 @@ const builder = imageUrlBuilder(client)
       )}
       <main className="min-h-screen">
         {category && <div className="container mx-auto px-4 py-32">
-          <h1 className="text-4xl font-light mb-8">
+          <h1 style={{ color: '#680c09'}} className="text-4xl font-light mb-8">
             {category.title}
           </h1>
           <ProductGrid products={category.products} />

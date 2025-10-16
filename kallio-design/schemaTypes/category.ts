@@ -1,4 +1,5 @@
 import {defineField, defineType} from 'sanity'
+import {orderRankField} from '@sanity/orderable-document-list'
 
 export default defineType({
   name: 'category',
@@ -19,6 +20,11 @@ export default defineType({
         source: 'title',
         maxLength: 96,
       },
+    }),
+    // Add the order rank field
+    orderRankField({
+      type: 'category',
+      newItemPosition: 'after',
     }),
     defineField({
       name: 'image',

@@ -31,8 +31,8 @@ export default function ProductCard({ product }: ProductCardProps) {
           className="h-full w-full object-cover object-center group-hover:opacity-75"
         />
       </div>
-      <h3 className="mt-4 text-sm text-brand-text">{product.name}</h3>
-      <p className="mt-1 text-lg font-medium text-white">RM{product.price.toFixed(2)}</p>
+      <h3 style={{ color: '#680c09',fontSize:'large' }} className="mt-4 text-sm text-brand-text">{product.name}</h3>
+      <p style={{ color: '#676767', fontSize: 'small'}}className="mt-1 text-lg font-medium">RM{product.price.toFixed(2)}</p>
       </Link>
     </motion.div>
   )

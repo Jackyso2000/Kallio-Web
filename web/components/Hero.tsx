@@ -55,7 +55,6 @@ export default function Hero({ pretitle, title, buttonText, backgroundImageUrl }
             alt="Hero background"
             layout="fill"
             objectFit="cover"
-            className="opacity-20"
             priority
           />
         </motion.div>

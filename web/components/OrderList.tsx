@@ -1,11 +1,17 @@
 'use client'
 
+import { useState, useEffect } from 'react'
 import jsPDF from 'jspdf'
 import autoTable from 'jspdf-autotable'
 import Image from 'next/image'
+import { AnimatePresence } from 'framer-motion'
+import ReviewForm from './ReviewForm'
+import { toast } from 'sonner'
 
 interface OrderItem {
     name: string
+    productId: string
+    hasBeenReviewed: boolean
     quantity: number
     price: number
     image?: string
@@ -33,6 +39,29 @@ interface jsPDFWithPlugin extends jsPDF {
 }
 
 export default function OrderList({ orders }: OrderListProps) {
+    const [localOrders, setLocalOrders] = useState(orders)
+    const [reviewingProduct, setReviewingProduct] = useState<OrderItem | null>(null)
+
+    useEffect(() => {
+        setLocalOrders(orders)
+        console.log(orders)
+    }, [orders])
+
+    const handleReviewSubmitted = () => {
+        toast.success('Thank you!', { description: 'Your review has been submitted for approval.' })
+        if (reviewingProduct) {
+            // Update the local state to reflect that the item has been reviewed
+            setLocalOrders(prevOrders =>
+                prevOrders.map(order => ({
+                    ...order,
+                    items: order.items.map(item =>
+                        item.productId === reviewingProduct.productId ? { ...item, hasBeenReviewed: true } : item
+                    ),
+                }))
+            )
+        }
+    }
+
     const generateInvoice = (order: Order) => {
         const doc = new jsPDF() as jsPDFWithPlugin
 
@@ -73,7 +102,7 @@ export default function OrderList({ orders }: OrderListProps) {
 
     return (
         <div className="space-y-8">
-            {orders.map((order) => (
+            {localOrders.map((order) => (
                 <div key={order._id} className="bg-black/5 p-6 rounded-lg">
                     <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4">
                         <div>
@@ -93,29 +122,52 @@ export default function OrderList({ orders }: OrderListProps) {
                     <div className="border-t border-brand-text/20 pt-4">
                         <ul className="space-y-4">
                             {order.items.map((item, index) => (
-                                <li key={index} className="flex items-center justify-between text-sm">
-                                    <div className="flex items-center">
-                                        {item.image && (
-                                            <Image src={item.image} alt={item.name} width={64} height={64} className="w-16 h-16 rounded-md object-cover mr-4" />
-                                        )}
-                                        <div>
-                                            <div>{item.name}</div>
+                                <li key={index} className="flex flex-col sm:flex-row items-start sm:items-center justify-between text-sm">
+                                    <div className="flex items-center mb-2 sm:mb-0">
+                                        <div className="flex-shrink-0">
+                                            {item.image && (
+                                                <Image src={item.image} alt={item.name} width={64} height={64} className="w-16 h-16 rounded-md object-cover mr-4" />
+                                            )}
+                                        </div>
+                                        <div className="flex-grow">
+                                            <div className="font-medium">{item.name}</div>
                                             <div className="text-brand-text/70">Quantity: {item.quantity}</div>
+                                            {!item.hasBeenReviewed ? (
+                                                <button
+                                                    onClick={() => setReviewingProduct(item)}
+                                                    className="mt-2 px-3 py-1 text-xs font-medium text-brand-text border border-brand-text/30 rounded-full hover:bg-brand-text/10 transition-colors"
+                                                >
+                                                    Write a review
+                                                </button>
+                                            ) : (
+                                                <p className="text-green-600 text-xs mt-1">Review submitted</p>
+                                            )}
                                         </div>
                                     </div>
-                                    <span>RM{(item.price * item.quantity).toFixed(2)}</span>
+                                    <span className="font-medium self-end sm:self-center">RM{(item.price * item.quantity).toFixed(2)}</span>
                                 </li>
                             ))}
                         </ul>
                     </div>
                     <div className="text-right mt-4">
                         <button onClick={() => generateInvoice(order)} className="bg-white text-black px-4 py-2 rounded-full text-sm hover:bg-white/80 transition-opacity cursor-pointer">
-
                             Download Invoice
                         </button>
                     </div>
                 </div>
             ))}
+            <AnimatePresence>
+                {reviewingProduct && (
+                    <ReviewForm
+                        productId={reviewingProduct.productId}
+                        orderId={localOrders.find(o => o.items.some(i => i._key === reviewingProduct._key))?._id || ''}
+                        orderItemKey={reviewingProduct._key}
+                        productName={reviewingProduct.name}
+                        onClose={() => setReviewingProduct(null)}
+                        onReviewSubmitted={handleReviewSubmitted}
+                    />
+                )}
+            </AnimatePresence>
         </div>
     )
 }

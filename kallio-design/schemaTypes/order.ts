@@ -43,13 +43,17 @@ export default defineType({
         {
           type: 'object',
           fields: [
-            { name: 'name', type: 'string', title: 'Product Name' },
+            defineField({name: 'product', type: 'reference', to: [{type: 'product'}]}),
             { name: 'quantity', type: 'number', title: 'Quantity' },
             { name: 'price', type: 'number', title: 'Price' },
+            defineField({
+              name: 'hasBeenReviewed',
+              title: 'Item Reviewed',
+              type: 'boolean',
+            }),
           ],
         },
       ],
-      readOnly: true,
     }),
     defineField({
       name: 'status',
