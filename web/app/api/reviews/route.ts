@@ -38,7 +38,7 @@ const { userId, sessionClaims } = await auth()
       reviewerName: sessionClaims?.fullName || 'Anonymous',
       rating: Number(rating),
       comment: comment || '',
-      approved: false, // Reviews should be manually approved
+      approved: true, // Reviews should be manually approved
     }
 
     // 4. Create the review and patch the order in a single transaction

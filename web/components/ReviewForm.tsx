@@ -9,6 +9,8 @@ interface ReviewFormProps {
   productName: string
   onClose: () => void
   onReviewSubmitted: () => void
+  orderId?: string           // ✅ make optional if not always needed
+  orderItemKey?: string
 }
 
 export default function ReviewForm({
@@ -36,7 +38,7 @@ export default function ReviewForm({
       const response = await fetch('/api/reviews', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ productId, rating, comment}),
+        body: JSON.stringify({ productId, rating, comment }),
       })
 
       if (!response.ok) {
@@ -56,13 +58,13 @@ export default function ReviewForm({
       onReviewSubmitted() // Notify parent component
       onClose()
     } catch (err: unknown) {
-  if (err instanceof Error) {
-    setError(err.message)
-  } else {
-    setError('An unknown error occurred.')
-  }
-}
- finally {
+      if (err instanceof Error) {
+        setError(err.message)
+      } else {
+        setError('An unknown error occurred.')
+      }
+    }
+    finally {
       setIsSubmitting(false)
     }
   }
@@ -97,7 +99,7 @@ export default function ReviewForm({
                 <Star
                   key={star}
                   size={28}
-                  className={ star <= (hoverRating || rating) ? 'cursor-pointer text-amber-400 fill-amber-400' : ' cursor-pointer text-gray-300'}
+                  className={star <= (hoverRating || rating) ? 'cursor-pointer text-amber-400 fill-amber-400' : ' cursor-pointer text-gray-300'}
                   onMouseEnter={() => setHoverRating(star)}
                   onMouseLeave={() => setHoverRating(0)}
                   onClick={() => setRating(star)}

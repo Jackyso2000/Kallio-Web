@@ -37,7 +37,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
     <Layout>
       <div className="min-h-screen">
         <div className="container mx-auto px-4 py-32">
-          <h1 className="text-4xl font-light mb-8">
+          <h1 style={{ color: '#680c09'}} className="text-4xl font-light mb-8">
             {category.title}
           </h1>
           <div className="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 xl:gap-x-8">

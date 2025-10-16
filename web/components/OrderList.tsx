@@ -15,6 +15,7 @@ interface OrderItem {
     quantity: number
     price: number
     image?: string
+    _key?: string           // ✅ make optional if not always needed
 }
 
 interface Order {
@@ -48,7 +49,7 @@ export default function OrderList({ orders }: OrderListProps) {
     }, [orders])
 
     const handleReviewSubmitted = () => {
-        toast.success('Thank you!', { description: 'Your review has been submitted for approval.' })
+        toast.success('Thank you!', { description: 'Your review has been submitted.' })
         if (reviewingProduct) {
             // Update the local state to reflect that the item has been reviewed
             setLocalOrders(prevOrders =>
@@ -101,7 +102,7 @@ export default function OrderList({ orders }: OrderListProps) {
     }
 
     return (
-        <div className="space-y-8">
+        <div style={{ color: '#676767' }} className="space-y-8">
             {localOrders.map((order) => (
                 <div key={order._id} className="bg-black/5 p-6 rounded-lg">
                     <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4">
@@ -135,8 +136,7 @@ export default function OrderList({ orders }: OrderListProps) {
                                             {!item.hasBeenReviewed ? (
                                                 <button
                                                     onClick={() => setReviewingProduct(item)}
-                                                    className="mt-2 px-3 py-1 text-xs font-medium text-brand-text border border-brand-text/30 rounded-full hover:bg-brand-text/10 transition-colors"
-                                                >
+                                                    className="bg-white text-black px-4 py-2 rounded-full text-sm hover:bg-white/80 transition-opacity cursor-pointer">
                                                     Write a review
                                                 </button>
                                             ) : (

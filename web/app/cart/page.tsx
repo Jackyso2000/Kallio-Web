@@ -32,10 +32,10 @@ export default function CartPage() {
     <Layout>
       <div className="min-h-screen bg-brand-bg">
         <div className="container mx-auto px-4 py-32">
-          <h1 className="text-4xl font-light mb-8">Your Cart</h1>
+          <h1 style={{ color: '#680c09'}} className="text-4xl font-light mb-8">Your Cart</h1>
           {cart.length === 0 ? (
             <div className="text-center py-20">
-              <p className="text-xl text-brand-text mb-4">Your cart is empty.</p>
+              <p style={{ color: '#680c09'}} className="text-xl text-brand-text mb-4">Your cart is empty.</p>
               <Link
                 href="/catalog"
                 className="mt-10 w-full bg-white text-black py-3 px-8 rounded-full hover:opacity-90 transition-opacity cursor-pointer"
@@ -44,7 +44,7 @@ export default function CartPage() {
               </Link>
             </div>
           ) : (
-            <div className="grid lg:grid-cols-3 gap-12">
+            <div style={{ color: '#676767'}} className="grid lg:grid-cols-3 gap-12">
               <div className="lg:col-span-2">
                 <ul role="list" className="divide-y divide-brand-text/20">
                   {cart.map((product) => (

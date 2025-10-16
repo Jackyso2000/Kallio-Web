@@ -39,7 +39,7 @@ export default async function Home() {
       {/* Featured Products Section */}
       <div className="bg-brand-bg py-24">
         <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-light text-center mb-12">Featured Products</h2>
+          <h2 style={{ color: '#680c09'}} className="text-3xl font-light text-center mb-12">Featured Products</h2>
           <div className="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 xl:gap-x-8">
             {featuredProducts.map((product) => (
               <ProductCard key={product._id} product={product} />

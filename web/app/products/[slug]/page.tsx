@@ -3,6 +3,13 @@ import ProductView from '@/components/ProductView'
 import { client } from '@/sanity/client'
 import { notFound } from 'next/navigation'
 
+interface PageProps {
+  params: {
+    slug: string
+  }
+}
+
+// This query fetches the product and its approved reviews
 const PRODUCT_QUERY = `*[_type == "product" && slug.current == $slug][0] {
   _id,
   name,
@@ -20,15 +27,12 @@ const PRODUCT_QUERY = `*[_type == "product" && slug.current == $slug][0] {
   } | order(_createdAt desc)
 }`
 
-export default async function ProductPage({
-  params,
-}: {
-  params: { slug: string }
-}) {
-  const product = await client.fetch(PRODUCT_QUERY, { slug: params.slug })
+export default async function ProductPage({ params }:{ params: Promise<{ slug: string }> }) {
+ 
+  const product = await client.fetch(PRODUCT_QUERY, { slug: (await params).slug })
 
   if (!product) {
-    notFound()
+    notFound() // If no product is found, show a 404 page
   }
 
   return (

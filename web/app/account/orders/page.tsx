@@ -50,9 +50,9 @@ export default async function OrdersPage() {
     <Layout>
       <div className="min-h-screen bg-brand-bg">
         <div className="container mx-auto px-4 py-32">
-          <h1 className="text-4xl font-light mb-8">My Orders</h1>
+          <h1 style={{ color: '#680c09'}} className="text-4xl font-light mb-8">My Orders</h1>
           {orders.length === 0 ? (
-            <p className="text-brand-text">You have not placed any orders yet.</p>
+            <p style={{ color: '#680c09'}} className="text-brand-text">You have not placed any orders yet.</p>
           ) : (
             <OrderList orders={orders} />
           )}
