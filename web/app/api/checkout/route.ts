@@ -41,7 +41,9 @@ export async function POST(req: NextRequest) {
                 // Add the Clerk User ID to the session metadata
                 userId: userId || 'guest',
                 // Store cart items as a string to be parsed in the webhook
-                cartItems: JSON.stringify(cartItems.map(item => ({ id: item.id, name: item.name, quantity: item.quantity, price: item.price, image: item.image }))),
+                cartItems: JSON.stringify(cartItems.map(item => ({ id: item.id, name: item.name, quantity: item.quantity, price: item.price, 
+                    //image: item.image 
+                }))),
             },
 
             // 👇 Enable phone number collection

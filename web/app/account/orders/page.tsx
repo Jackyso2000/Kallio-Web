@@ -32,7 +32,7 @@ const ORDERS_QUERY = `*[_type == "order" && userId == $userId] | order(_createdA
   status,
   userName,
   shippingAddress,
-  "items": items[]{ name, quantity, price, "productId": coalesce(^.items[@.id == id][0].id, ''), "image": coalesce(^.items[@.id == id][0].image, '')}
+  "items": items[]{ name, quantity, price, id, image}
 
 }`
 
@@ -45,7 +45,7 @@ export default async function OrdersPage() {
   }
 
   const orders = await client.fetch<Order[]>(ORDERS_QUERY, { userId })
-
+  console.log(orders)
   return (
     <Layout>
       <div className="min-h-screen bg-brand-bg">

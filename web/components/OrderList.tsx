@@ -10,7 +10,7 @@ import { toast } from 'sonner'
 
 interface OrderItem {
     name: string
-    productId: string
+    id: string
     hasBeenReviewed: boolean
     quantity: number
     price: number
@@ -41,7 +41,10 @@ interface jsPDFWithPlugin extends jsPDF {
 
 export default function OrderList({ orders }: OrderListProps) {
     const [localOrders, setLocalOrders] = useState(orders)
-    const [reviewingProduct, setReviewingProduct] = useState<OrderItem | null>(null)
+    const [reviewingItem, setReviewingItem] = useState<{
+        item: OrderItem
+        orderId: string
+    } | null>(null)
 
     useEffect(() => {
         setLocalOrders(orders)
@@ -50,13 +53,13 @@ export default function OrderList({ orders }: OrderListProps) {
 
     const handleReviewSubmitted = () => {
         toast.success('Thank you!', { description: 'Your review has been submitted.' })
-        if (reviewingProduct) {
+        if (reviewingItem) {
             // Update the local state to reflect that the item has been reviewed
             setLocalOrders(prevOrders =>
                 prevOrders.map(order => ({
                     ...order,
                     items: order.items.map(item =>
-                        item.productId === reviewingProduct.productId ? { ...item, hasBeenReviewed: true } : item
+                        item._key === reviewingItem.item._key ? { ...item, hasBeenReviewed: true } : item
                     ),
                 }))
             )
@@ -122,8 +125,8 @@ export default function OrderList({ orders }: OrderListProps) {
                     </div>
                     <div className="border-t border-brand-text/20 pt-4">
                         <ul className="space-y-4">
-                            {order.items.map((item, index) => (
-                                <li key={index} className="flex flex-col sm:flex-row items-start sm:items-center justify-between text-sm">
+                            {order.items.map((item) => (
+                                <li key={item._key} className="flex flex-col sm:flex-row items-start sm:items-center justify-between text-sm">
                                     <div className="flex items-center mb-2 sm:mb-0">
                                         <div className="flex-shrink-0">
                                             {item.image && (
@@ -135,7 +138,7 @@ export default function OrderList({ orders }: OrderListProps) {
                                             <div className="text-brand-text/70">Quantity: {item.quantity}</div>
                                             {!item.hasBeenReviewed ? (
                                                 <button
-                                                    onClick={() => setReviewingProduct(item)}
+                                                    onClick={() => setReviewingItem({ item, orderId: order._id })}
                                                     className="bg-white text-black px-4 py-2 rounded-full text-sm hover:bg-white/80 transition-opacity cursor-pointer">
                                                     Write a review
                                                 </button>
@@ -157,13 +160,13 @@ export default function OrderList({ orders }: OrderListProps) {
                 </div>
             ))}
             <AnimatePresence>
-                {reviewingProduct && (
+                {reviewingItem && (
                     <ReviewForm
-                        productId={reviewingProduct.productId}
-                        orderId={localOrders.find(o => o.items.some(i => i._key === reviewingProduct._key))?._id || ''}
-                        orderItemKey={reviewingProduct._key}
-                        productName={reviewingProduct.name}
-                        onClose={() => setReviewingProduct(null)}
+                        productId={reviewingItem.item.id}
+                        orderId={reviewingItem.orderId}
+                        orderItemKey={reviewingItem.item._key}
+                        productName={reviewingItem.item.name}
+                        onClose={() => setReviewingItem(null)}
                         onReviewSubmitted={handleReviewSubmitted}
                     />
                 )}

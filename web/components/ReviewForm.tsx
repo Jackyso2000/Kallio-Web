@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { useUser } from '@clerk/nextjs'
 import { motion } from 'framer-motion'
 import { Star, X } from 'lucide-react'
 
@@ -18,7 +19,10 @@ export default function ReviewForm({
   productName,
   onClose,
   onReviewSubmitted,
+  orderId, // These were passed but not destructured below
+  orderItemKey, // These were passed but not destructured below
 }: ReviewFormProps) {
+  const { user } = useUser()
   const [rating, setRating] = useState(0)
   const [hoverRating, setHoverRating] = useState(0)
   const [comment, setComment] = useState('')
@@ -33,12 +37,22 @@ export default function ReviewForm({
     }
     setIsSubmitting(true)
     setError(null)
-
+    console.log(productId,orderId,productName,rating, comment)
     try {
+      console.log(user?.fullName)
+      const reviewerName = user?.fullName || 'Anonymous'
+      console.log(reviewerName)
       const response = await fetch('/api/reviews', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ productId, rating, comment }),
+        body: JSON.stringify({
+          productId,
+          rating,
+          comment,
+          reviewerName,
+          orderId,
+          orderItemKey,
+        }),
       })
 
       if (!response.ok) {

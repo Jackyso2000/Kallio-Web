@@ -39,21 +39,7 @@ export default defineType({
       name: 'items',
       title: 'Items',
       type: 'array',
-      of: [
-        {
-          type: 'object',
-          fields: [
-            defineField({name: 'product', type: 'reference', to: [{type: 'product'}]}),
-            { name: 'quantity', type: 'number', title: 'Quantity' },
-            { name: 'price', type: 'number', title: 'Price' },
-            defineField({
-              name: 'hasBeenReviewed',
-              title: 'Item Reviewed',
-              type: 'boolean',
-            }),
-          ],
-        },
-      ],
+      of: [{type: 'reference', to: [{type: 'orderItem'}]}],
     }),
     defineField({
       name: 'status',
