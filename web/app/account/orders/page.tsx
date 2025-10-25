@@ -5,12 +5,15 @@ import { auth } from '@clerk/nextjs/server'
 import { redirect } from 'next/navigation'
 
 interface OrderItem {
-  name: string
-  productId: string
+  product: {
+    _id: string
+    name: string
+    images?: string[]
+  }
   hasBeenReviewed: boolean
   quantity: number
   price: number
-  image?: string
+  _key: string
 }
 
 interface Order {
@@ -24,7 +27,9 @@ interface Order {
   shippingAddress: string
 }
 
-const ORDERS_QUERY = `*[_type == "order" && userId == $userId] | order(_createdAt desc) {
+// ✅ Updated GROQ query: dereference products properly
+const ORDERS_QUERY = `
+*[_type == "order" && userId == $userId] | order(_createdAt desc) {
   _id,
   _createdAt,
   totalAmount,
@@ -32,27 +37,42 @@ const ORDERS_QUERY = `*[_type == "order" && userId == $userId] | order(_createdA
   status,
   userName,
   shippingAddress,
-  "items": items[]{ name, quantity, price, id, image}
-
-}`
+  items[]{
+    _key,
+    quantity,
+    price,
+    hasBeenReviewed,
+    product->{
+      _id,
+      name,
+      "images": images[].asset->url
+    }
+  }
+}
+`
 
 export default async function OrdersPage() {
   const { userId } = await auth()
 
   if (!userId) {
-    // This should be handled by middleware, but as a fallback
     redirect('/sign-in')
   }
 
+  // Fetch expanded order data from Sanity
   const orders = await client.fetch<Order[]>(ORDERS_QUERY, { userId })
-  console.log(orders)
+
   return (
     <Layout>
       <div className="min-h-screen bg-brand-bg">
         <div className="container mx-auto px-4 py-32">
-          <h1 style={{ color: '#680c09'}} className="text-4xl font-light mb-8">My Orders</h1>
+          <h1 style={{ color: '#680c09' }} className="text-4xl font-light mb-8">
+            My Orders
+          </h1>
+
           {orders.length === 0 ? (
-            <p style={{ color: '#680c09'}} className="text-brand-text">You have not placed any orders yet.</p>
+            <p style={{ color: '#680c09' }} className="text-brand-text">
+              You have not placed any orders yet.
+            </p>
           ) : (
             <OrderList orders={orders} />
           )}

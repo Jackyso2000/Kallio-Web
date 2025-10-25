@@ -51,7 +51,7 @@ export default function ProductView({ product }: { product: Product }) {
   // State to manage the currently selected large image
   const [selectedImage, setSelectedImage] = useState(product.images[0])
   const { addToCart } = useCart()
-
+  console.log(product)
   const reviews = product.reviews || []
   const averageRating =
     reviews.length > 0
@@ -148,12 +148,12 @@ export default function ProductView({ product }: { product: Product }) {
         {reviews.length > 0 ? (
           <div className="mt-6 space-y-8">
             {reviews.map((review) => (
-              <div key={review._id} className="flex flex-col sm:flex-row gap-6">
-                <div className="flex-shrink-0 sm:w-40 text-center sm:text-left">
-                  <p className="font-semibold truncate" title={review.reviewerName}>{review.reviewerName}</p>
+              <div key={review._id} className="flex flex-col sm:flex-row gap-4">
+                <div className="flex-shrink-0 text-center sm:text-left">
+                  <p className="font-semibold">{review.reviewerName}</p>
                   <p className="text-sm text-brand-text/60">{new Date(review._createdAt).toLocaleDateString()}</p>
                 </div>
-                <div className="flex-1">
+                <div>
                   <StarRating rating={review.rating} />
                   <p className="mt-2 text-brand-text/90">{review.comment}</p>
                 </div>

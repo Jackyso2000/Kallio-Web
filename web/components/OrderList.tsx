@@ -9,13 +9,15 @@ import ReviewForm from './ReviewForm'
 import { toast } from 'sonner'
 
 interface OrderItem {
-    name: string
-    id: string
+    product: {
+        _id: string
+        name: string
+        images?: string[]
+    }
     hasBeenReviewed: boolean
     quantity: number
     price: number
-    image?: string
-    _key?: string           // ✅ make optional if not always needed
+    _key: string
 }
 
 interface Order {
@@ -41,10 +43,7 @@ interface jsPDFWithPlugin extends jsPDF {
 
 export default function OrderList({ orders }: OrderListProps) {
     const [localOrders, setLocalOrders] = useState(orders)
-    const [reviewingItem, setReviewingItem] = useState<{
-        item: OrderItem
-        orderId: string
-    } | null>(null)
+    const [reviewingProduct, setReviewingProduct] = useState<OrderItem | null>(null)
 
     useEffect(() => {
         setLocalOrders(orders)
@@ -53,13 +52,13 @@ export default function OrderList({ orders }: OrderListProps) {
 
     const handleReviewSubmitted = () => {
         toast.success('Thank you!', { description: 'Your review has been submitted.' })
-        if (reviewingItem) {
+        if (reviewingProduct) {
             // Update the local state to reflect that the item has been reviewed
             setLocalOrders(prevOrders =>
                 prevOrders.map(order => ({
                     ...order,
                     items: order.items.map(item =>
-                        item._key === reviewingItem.item._key ? { ...item, hasBeenReviewed: true } : item
+                            item._key === reviewingProduct._key ? { ...item, hasBeenReviewed: true } : item
                     ),
                 }))
             )
@@ -88,7 +87,7 @@ export default function OrderList({ orders }: OrderListProps) {
             startY: 80,
             head: [['Item', 'Quantity', 'Unit Price', 'Total']],
             body: order.items.map((item) => [
-                item.name,
+                item.product.name,
                 item.quantity,
                 `RM ${item.price.toFixed(2)}`,
                 `RM ${(item.price * item.quantity).toFixed(2)}`,
@@ -125,26 +124,29 @@ export default function OrderList({ orders }: OrderListProps) {
                     </div>
                     <div className="border-t border-brand-text/20 pt-4">
                         <ul className="space-y-4">
-                            {order.items.map((item) => (
-                                <li key={item._key} className="flex flex-col sm:flex-row items-start sm:items-center justify-between text-sm">
+                            {order.items.map((item, index) => (
+                                <li key={index} className="flex flex-col sm:flex-row items-start sm:items-center justify-between text-sm">
                                     <div className="flex items-center mb-2 sm:mb-0">
-                                        <div className="flex-shrink-0">
-                                            {item.image && (
-                                                <Image src={item.image} alt={item.name} width={64} height={64} className="w-16 h-16 rounded-md object-cover mr-4" />
-                                            )}
+                                        <div className="w-16 h-16 rounded-md object-cover mr-4 bg-gray-100 flex-shrink-0">
+                                            {item.product?.images?.[0] ? (
+                                                <Image src={item.product.images[0]} alt={item.product.name} width={64} height={64} className="w-16 h-16 rounded-md object-cover" />
+                                            ) : null}
                                         </div>
                                         <div className="flex-grow">
-                                            <div className="font-medium">{item.name}</div>
+                                            <div className="font-medium">{item.product?.name || 'Product not found'}</div>
                                             <div className="text-brand-text/70">Quantity: {item.quantity}</div>
-                                            {!item.hasBeenReviewed ? (
-                                                <button
-                                                    onClick={() => setReviewingItem({ item, orderId: order._id })}
-                                                    className="bg-white text-black px-4 py-2 rounded-full text-sm hover:bg-white/80 transition-opacity cursor-pointer">
-                                                    Write a review
-                                                </button>
-                                            ) : (
-                                                <p className="text-green-600 text-xs mt-1">Review submitted</p>
-                                            )}
+                                            {item.product ? (
+                                                !item.hasBeenReviewed ? (
+                                                    <button
+                                                        onClick={() => setReviewingProduct(item)}
+                                                        className="bg-white text-black px-4 py-2 rounded-full text-sm hover:bg-white/80 transition-opacity cursor-pointer">
+                                                        Write a review
+                                                    </button>
+                                                ) : (
+                                                    <p className="text-green-600 text-xs mt-1">Review submitted</p>
+                                                )
+                                            ) : <p className="text-red-500 text-xs mt-1">Product no longer available</p>
+                                            }
                                         </div>
                                     </div>
                                     <span className="font-medium self-end sm:self-center">RM{(item.price * item.quantity).toFixed(2)}</span>
@@ -160,13 +162,13 @@ export default function OrderList({ orders }: OrderListProps) {
                 </div>
             ))}
             <AnimatePresence>
-                {reviewingItem && (
+                {reviewingProduct && (
                     <ReviewForm
-                        productId={reviewingItem.item.id}
-                        orderId={reviewingItem.orderId}
-                        orderItemKey={reviewingItem.item._key}
-                        productName={reviewingItem.item.name}
-                        onClose={() => setReviewingItem(null)}
+                        productId={reviewingProduct.product?._id}
+                        orderId={localOrders.find(o => o.items.some(i => i._key === reviewingProduct._key))?._id || ''}
+                        orderItemKey={reviewingProduct._key}
+                        productName={reviewingProduct.product?.name || 'Product'}
+                        onClose={() => setReviewingProduct(null)}
                         onReviewSubmitted={handleReviewSubmitted}
                     />
                 )}
