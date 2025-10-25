@@ -11,8 +11,8 @@ const { userId, sessionClaims } = await auth()
 
   try {
     
-    const { productId, rating, comment, reviewerName } = await request.json()
-    console.log(request.json())
+    const { productId, rating, comment } = await request.json()
+
     // 2. Validate input
     if (!productId || !rating) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
@@ -22,9 +22,9 @@ const { userId, sessionClaims } = await auth()
     const existingReviewQuery = `count(*[_type == "review" && product._ref == $productId && clerkUserId == $userId])`
     const existingReviewCount = await client.fetch(existingReviewQuery, { productId, userId })
 
-    // if (existingReviewCount > 0) {
-    //   return NextResponse.json({ error: 'You have already reviewed this product.' }, { status: 409 }) // 409 Conflict
-    // }
+    if (existingReviewCount > 0) {
+      return NextResponse.json({ error: 'You have already reviewed this product.' }, { status: 409 }) // 409 Conflict
+    }
 
     // 3. Prepare the review document and the patch
     const reviewDoc = {
@@ -35,17 +35,33 @@ const { userId, sessionClaims } = await auth()
       },
       clerkUserId: userId,
       // Use user's name from Clerk session, or a default
-      reviewerName: reviewerName || 'Anonymous',
+      reviewerName: sessionClaims?.fullName || 'Anonymous',
       rating: Number(rating),
       comment: comment || '',
       approved: true, // Reviews should be manually approved
     }
 
+    // 4. Find the order item to patch
+    // Find the most recent order by this user that contains this product and hasn't been reviewed yet.
+    const orderToPatchQuery = `*[_type == "order" && userId == $userId && items[product._ref == $productId && hasBeenReviewed != true][0]._key != null] | order(_createdAt desc)[0] {
+      _id,
+      "itemKey": items[product._ref == $productId && hasBeenReviewed != true][0]._key
+    }`
+    const orderToPatch = await client.fetch(orderToPatchQuery, { userId, productId });
+
+    const transaction = client.transaction()
+
+    // 5. Add the review creation to the transaction
+    transaction.create(reviewDoc)
+
+    // 6. If we found an order item to patch, add the patch to the transaction
+    if (orderToPatch) {
+      transaction.patch(orderToPatch._id, {
+        set: { [`items[_key=="${orderToPatch.itemKey}"].hasBeenReviewed`]: true },
+      })
+    }
     // 4. Create the review and patch the order in a single transaction
-    await client
-      .transaction()
-      .create(reviewDoc)
-      .commit()
+    await transaction.commit()
 
     return NextResponse.json({ success: true }, { status: 201 })
   } catch (error) {

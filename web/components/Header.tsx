@@ -159,13 +159,11 @@ export default function Header() {
               <UserButton afterSignOutUrl="/" />
             </SignedIn>
             <SignedOut>
-              <div className="hidden md:block">
-                <SignInButton>
-                  <button className="text-sm text-brand-text px-4 py-2 border-brand-text/50 transition-colors hover:bg-brand-text hover:text-white cursor-pointer">
+              <SignInButton>
+                <button className="text-sm text-brand-text px-4 py-2 border-brand-text/50 transition-colors hover:bg-brand-text hover:text-white cursor-pointer">
                   Sign In
-                  </button>
-                </SignInButton>
-              </div>
+                </button>
+              </SignInButton>
             </SignedOut>
           </div>
         </div>
@@ -185,16 +183,6 @@ export default function Header() {
               <Link href="/" className="text-2xl text-brand-text hover:text-black" onClick={() => setIsMobileMenuOpen(false)}>Home</Link>
               <Link href="/catalog" className="text-2xl text-brand-text hover:text-black" onClick={() => setIsMobileMenuOpen(false)}>Catalog</Link>
               <Link href="/contact" className="text-2xl text-brand-text hover:text-black" onClick={() => setIsMobileMenuOpen(false)}>Contact</Link>
-              <SignedIn>
-                <Link href="/account/orders" className="text-2xl text-brand-text hover:text-black" onClick={() => setIsMobileMenuOpen(false)}>
-                  My Orders
-                </Link>
-              </SignedIn>
-              <SignedOut>
-                <SignInButton>
-                  <button className="text-2xl text-brand-text hover:text-black" onClick={() => setIsMobileMenuOpen(false)}>Sign In</button>
-                </SignInButton>
-              </SignedOut>
             </nav>
           </motion.div>
         )}

@@ -39,7 +39,40 @@ export default defineType({
       name: 'items',
       title: 'Items',
       type: 'array',
-      of: [{type: 'reference', to: [{type: 'orderItem'}]}],
+      of: [
+        {
+          type: 'object',
+          fields: [
+            defineField({name: 'product', type: 'reference', to: [{type: 'product'}]}),
+            { name: 'quantity', type: 'number', title: 'Quantity' },
+            { name: 'price', type: 'number', title: 'Price' },
+            defineField({
+              name: 'hasBeenReviewed',
+              title: 'Item Reviewed',
+              type: 'boolean',
+              description: 'This will be set to true automatically after the user reviews the product.',
+              initialValue: false,
+              readOnly: true,
+            }),
+          ],
+          preview: {
+            select: {
+              productName: 'product.name',
+              productImage: 'product.images.0',
+              quantity: 'quantity',
+              price: 'price',
+            },
+            prepare({ productName, productImage, quantity, price }) {
+              const total = (price * quantity).toFixed(2);
+              return {
+                title: `${productName || 'Product not found'} (x${quantity})`,
+                subtitle: `Subtotal: RM${total}`,
+                media: productImage,
+              };
+            },
+          },
+        },
+      ],
     }),
     defineField({
       name: 'status',
