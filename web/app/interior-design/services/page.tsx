@@ -68,7 +68,7 @@ export default function ServicesPage() {
       <div className="bg-[#680c09] py-24 text-center text-white">
         <div className="container mx-auto px-4">
           <h2 className="text-3xl md:text-4xl font-light mb-6 uppercase tracking-widest">Ready to transform your space?</h2>
-          <p className="mb-10 text-white/80 max-w-2xl mx-auto text-lg">Let's discuss your vision and how Kallio Design can bring it to life.</p>
+          <p className="mb-10 text-white/80 max-w-2xl mx-auto text-lg">Let&apos;s discuss your vision and how Kallio Design can bring it to life.</p>
           <Link href="/contact" className="bg-white text-[#680c09] px-10 py-4 rounded-full font-semibold uppercase tracking-widest hover:bg-gray-100 transition-colors">Start a Project</Link>
         </div>
       </div>

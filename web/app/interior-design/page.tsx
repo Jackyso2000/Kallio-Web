@@ -28,7 +28,7 @@ export default function InteriorDesignLandingPage() {
             We believe in creating spaces that are not only beautiful but also deeply personal and functional.
           </h2>
           <p className="text-gray-600 text-lg leading-relaxed mb-10">
-            From concept to completion, our studio works closely with clients to craft environments that reflect their unique lifestyle and aesthetic. Whether it's a residential haven or a dynamic commercial space, we bring a meticulous attention to detail and a passion for timeless design to every project.
+            From concept to completion, our studio works closely with clients to craft environments that reflect their unique lifestyle and aesthetic. Whether it&apos;s a residential haven or a dynamic commercial space, we bring a meticulous attention to detail and a passion for timeless design to every project.
           </p>
           <Link href="/interior-design/about" className="border-b border-[#680c09] text-[#680c09] pb-1 hover:text-black hover:border-black transition-colors duration-300 uppercase tracking-widest text-sm font-semibold">
             Discover Our Story
@@ -73,7 +73,7 @@ export default function InteriorDesignLandingPage() {
       <div className="bg-[#680c09] py-24 text-center text-white">
         <div className="container mx-auto px-4">
           <h2 className="text-3xl md:text-4xl font-light mb-6 uppercase tracking-widest">Start Your Project</h2>
-          <p className="mb-10 text-white/80 max-w-2xl mx-auto text-lg">We are currently accepting new projects for the upcoming season. Let's create something extraordinary together.</p>
+          <p className="mb-10 text-white/80 max-w-2xl mx-auto text-lg">We are currently accepting new projects for the upcoming season. Let&apos;s create something extraordinary together.</p>
           <Link href="/contact" className="bg-white text-[#680c09] px-10 py-4 rounded-full font-semibold uppercase tracking-widest hover:bg-gray-100 transition-colors">Contact Us</Link>
         </div>
       </div>

@@ -1,13 +1,14 @@
 import Layout from '@/components/Layout'
+import Link from 'next/link'
 
 export default function PortfolioPage() {
   const projects = [
-    { title: 'Modern Penthouse', category: 'Residential', image: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?q=80&w=800&auto=format&fit=crop' },
-    { title: 'Minimalist Cafe', category: 'Commercial', image: 'https://images.unsplash.com/photo-1554118811-1e0d58224f24?q=80&w=800&auto=format&fit=crop' },
-    { title: 'Urban Loft', category: 'Residential', image: 'https://images.unsplash.com/photo-1618219908412-a29a1bb7b86e?q=80&w=800&auto=format&fit=crop' },
-    { title: 'Boutique Hotel', category: 'Commercial', image: 'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?q=80&w=800&auto=format&fit=crop' },
-    { title: 'Coastal Villa', category: 'Residential', image: 'https://images.unsplash.com/photo-1615874959474-d609969a24d4?q=80&w=800&auto=format&fit=crop' },
-    { title: 'Creative Studio', category: 'Commercial', image: 'https://images.unsplash.com/photo-1524758631624-e2822e304c36?q=80&w=800&auto=format&fit=crop' },
+    { title: 'Modern Penthouse', slug: 'modern-penthouse', category: 'Residential', image: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?q=80&w=800&auto=format&fit=crop' },
+    { title: 'Minimalist Cafe', slug: 'minimalist-cafe', category: 'Commercial', image: 'https://images.unsplash.com/photo-1554118811-1e0d58224f24?q=80&w=800&auto=format&fit=crop' },
+    { title: 'Urban Loft', slug: 'urban-loft', category: 'Residential', image: 'https://images.unsplash.com/photo-1618219908412-a29a1bb7b86e?q=80&w=800&auto=format&fit=crop' },
+    { title: 'Boutique Hotel', slug: 'boutique-hotel', category: 'Commercial', image: 'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?q=80&w=800&auto=format&fit=crop' },
+    { title: 'Coastal Villa', slug: 'coastal-villa', category: 'Residential', image: 'https://images.unsplash.com/photo-1615874959474-d609969a24d4?q=80&w=800&auto=format&fit=crop' },
+    { title: 'Creative Studio', slug: 'creative-studio', category: 'Commercial', image: 'https://images.unsplash.com/photo-1524758631624-e2822e304c36?q=80&w=800&auto=format&fit=crop' },
   ]
 
   return (
@@ -24,7 +25,7 @@ export default function PortfolioPage() {
         <div className="container mx-auto px-4 max-w-7xl">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {projects.map((project, index) => (
-              <div key={index} className="group cursor-pointer">
+              <Link href={`/interior-design/portfolio/${project.slug}`} key={index} className="group block cursor-pointer">
                 <div className="relative aspect-[4/5] w-full overflow-hidden rounded-lg mb-4 bg-gray-200">
                   <img 
                     src={project.image} 
@@ -43,7 +44,7 @@ export default function PortfolioPage() {
                   <h3 className="text-xl font-light text-gray-900 mb-1">{project.title}</h3>
                   <p className="text-sm text-[#680c09] tracking-widest uppercase">{project.category}</p>
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
         </div>
@@ -52,7 +53,7 @@ export default function PortfolioPage() {
       {/* Bottom Spacer */}
       <div className="bg-white py-16 text-center">
         <p className="text-gray-500 max-w-2xl mx-auto px-4 italic font-light">
-          "Design is not just what it looks like and feels like. Design is how it works."
+          &quot;Design is not just what it looks like and feels like. Design is how it works.&quot;
         </p>
       </div>
     </Layout>
