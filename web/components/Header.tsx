@@ -30,6 +30,7 @@ const CATEGORIES_QUERY = `*[_type == "category"] | order(orderRank asc) {
 export default function Header() {
   const [searchTerm, setSearchTerm] = useState('')
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const [isInteriorOpen, setIsInteriorOpen] = useState(false)
   const [isCatalogOpen, setIsCatalogOpen] = useState(false)
   const [categories, setCategories] = useState<Category[]>([])
 
@@ -51,26 +52,72 @@ export default function Header() {
 
 
   return (
-    <header className="bg-[#680c09] text-white sticky top-0 z-50" onMouseLeave={() => setIsCatalogOpen(false)}>
+    <header className="bg-[#680c09] text-white sticky top-0 z-50">
       <div className="container mx-auto px-4">
-        <div className="flex justify-between items-center h-24">
-          {/* Left side: Nav */}
-          <nav className="hidden md:flex items-center gap-8">
-            <Link href="/" className="text-sm text-brand-text hover:text-white">Home</Link>
+        <div className="flex justify-between items-center h-24 relative">
+          {/* Mobile menu button */}
+          <div className="md:hidden z-50 flex-1 flex justify-start">
+            <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
+              {isMobileMenuOpen ? <X className="text-brand-text" /> : <Menu className="text-brand-text" />}
+            </button>
+          </div>
 
-            <div className="relative" onMouseEnter={() => setIsCatalogOpen(true)}>
-              <button className="text-sm text-brand-text hover:text-white flex items-center">
-                Catalog
+          {/* Left side: Nav */}
+          <nav className="hidden md:flex items-center gap-6 lg:gap-10 flex-1 justify-start">
+            <Link href="/" className="text-sm font-medium text-brand-text hover:text-white uppercase tracking-wider">Home</Link>
+
+            {/* Interior Design Dropdown */}
+            <div className="relative" onMouseEnter={() => setIsInteriorOpen(true)} onMouseLeave={() => setIsInteriorOpen(false)}>
+              <Link href="/interior-design" className="text-sm font-medium text-brand-text hover:text-white flex items-center uppercase tracking-wider">
+                Interior Design
                 <svg
-                  className={`w-4 h-4 ml-1 transition-transform duration-200 ${isCatalogOpen ? 'rotate-180' : ''}`}
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  xmlns="http://www.w3.org/2000/svg"
+                  className={`w-4 h-4 ml-1 transition-transform duration-200 ${isInteriorOpen ? 'rotate-180' : ''}`}
+                  fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"
                 >
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
                 </svg>
-              </button>
+              </Link>
+
+              <AnimatePresence>
+                {isInteriorOpen && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}
+                    className="absolute top-full left-0 mt-2 w-48 bg-white rounded-md shadow-lg z-10 overflow-hidden"
+                  >
+                    <ul className="py-1 text-gray-800">
+                      <li><Link href="/interior-design/services" className="block px-4 py-2 text-sm hover:bg-gray-100">Services</Link></li>
+                      <li><Link href="/interior-design/portfolio" className="block px-4 py-2 text-sm hover:bg-gray-100">Portfolio</Link></li>
+                      <li><Link href="/interior-design/about" className="block px-4 py-2 text-sm hover:bg-gray-100">About Us</Link></li>
+                    </ul>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+
+          </nav>
+
+          {/* Center: Logo */}
+          <div className="absolute left-1/2 -translate-x-1/2 flex-none">
+            <Link href="/" className="text-center border-2 border-brand-text px-3 py-1 block">
+              <span className="font-bold text-lg tracking-widest text-brand-text">KALLIO</span>
+              <span className="text-xs tracking-widest text-brand-text block -mt-1">DESIGN</span>
+            </Link>
+          </div>
+
+          {/* Right side: Nav & Tools */}
+          <div className="flex items-center gap-6 lg:gap-10 flex-1 justify-end">
+            <nav className="hidden md:flex items-center gap-6 lg:gap-10">
+              {/* Furniture Dropdown */}
+              <div className="relative" onMouseEnter={() => setIsCatalogOpen(true)} onMouseLeave={() => setIsCatalogOpen(false)}>
+                {/* <Link href="/catalog" className="text-sm font-medium text-brand-text hover:text-white flex items-center uppercase tracking-wider">
+                  Furniture
+                  <svg
+                    className={`w-4 h-4 ml-1 transition-transform duration-200 ${isCatalogOpen ? 'rotate-180' : ''}`}
+                    fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+                  </svg>
+                </Link> */}
 
               <AnimatePresence>
                 {isCatalogOpen && (
@@ -78,22 +125,22 @@ export default function Header() {
                     initial={{ opacity: 0, y: -10 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -10 }}
-                    className="absolute top-full left-0 mt-2 w-48 bg-white rounded-md shadow-lg z-10"
+                    className="absolute top-full left-0 mt-2 w-48 bg-white rounded-md shadow-lg z-10 overflow-hidden"
                   >
                     <ul className="py-1 text-gray-800">
-                                              <li key={'all'}>
+                      <li key={'all'}>
                           <Link
-                            href={`/catalog/`}
-                            className="block px-4 py-2 hover:bg-gray-100"
+                            href={`/catalog`}
+                            className="block px-4 py-2 text-sm hover:bg-gray-100"
                           >
-                            {'All'}
+                            All Furniture
                           </Link>
                         </li>
                       {categories.map((category) => (
                         <li key={category._id}>
                           <Link
                             href={`/catalog/${category.slug.current}`}
-                            className="block px-4 py-2 hover:bg-gray-100"
+                            className="block px-4 py-2 text-sm hover:bg-gray-100"
                           >
                             {category.title}
                           </Link>
@@ -105,27 +152,11 @@ export default function Header() {
               </AnimatePresence>
             </div>
 
-            <Link href="/contact" className="text-sm text-brand-text hover:text-white">Contact</Link>
-          </nav>
+              <Link href="/contact" className="text-sm font-medium text-brand-text hover:text-white uppercase tracking-wider">Contact</Link>
+            </nav>
 
-          {/* Mobile menu button */}
-          <div className="md:hidden z-50">
-            <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
-              {isMobileMenuOpen ? <X className="text-brand-text" /> : <Menu className="text-brand-text" />}
-            </button>
-          </div>
-
-          {/* Center: Logo */}
-          <div className="absolute left-1/2 -translate-x-1/2">
-            <Link href="/" className="text-center border-2 border-brand-text px-3 py-1 block">
-              <span className="font-bold text-lg tracking-widest text-brand-text">KALLIO</span>
-              <span className="text-xs tracking-widest text-brand-text block -mt-1">DESIGN</span>
-            </Link>
-          </div>
-
-          {/* Right side */}
           <div className="flex items-center gap-6">
-            <div className="hidden md:flex items-center border border-brand-text rounded-full px-3 py-1">
+            {/* <div className="hidden md:flex items-center border border-brand-text rounded-full px-3 py-1">
               <input
                 type="text"
                 placeholder="Search"
@@ -139,20 +170,20 @@ export default function Header() {
                 }}
               />
               <Search size={16} className="text-brand-text" />
-            </div>
+            </div> */}
 
             {/* Cart */}
-            <Link href="/cart" className="relative">
+            {/* <Link href="/cart" className="relative">
               <ShoppingCart className="text-brand-text" />
               {cartCount > 0 && (
                 <span className="absolute -top-2 -right-2 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-xs text-white">
                   {cartCount}
                 </span>
               )}
-            </Link>
+            </Link> */}
 
             {/* User actions */}
-            <SignedIn>
+            {/* <SignedIn>
               <Link href="/account/orders" className="hidden md:block text-sm text-brand-text hover:text-white">
                 My Orders
               </Link>
@@ -164,7 +195,8 @@ export default function Header() {
                   Sign In
                 </button>
               </SignInButton>
-            </SignedOut>
+            </SignedOut> */}
+          </div>
           </div>
         </div>
       </div>
@@ -181,7 +213,10 @@ export default function Header() {
           >
             <nav className="flex flex-col items-center gap-8">
               <Link href="/" className="text-2xl text-brand-text hover:text-black" onClick={() => setIsMobileMenuOpen(false)}>Home</Link>
-              <Link href="/catalog" className="text-2xl text-brand-text hover:text-black" onClick={() => setIsMobileMenuOpen(false)}>Catalog</Link>
+              <div className="flex flex-col items-center gap-4 my-4">
+                <Link href="/interior-design" className="text-2xl text-brand-text hover:text-black" onClick={() => setIsMobileMenuOpen(false)}>Interior Design</Link>
+                <Link href="/catalog" className="text-2xl text-brand-text hover:text-black" onClick={() => setIsMobileMenuOpen(false)}>Furniture</Link>
+              </div>
               <Link href="/contact" className="text-2xl text-brand-text hover:text-black" onClick={() => setIsMobileMenuOpen(false)}>Contact</Link>
             </nav>
           </motion.div>

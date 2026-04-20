@@ -1,13 +1,28 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { Stripe } from 'stripe'
+import Stripe from 'stripe'
 import { client } from '@/sanity/client'
-import { v4 as uuidv4 } from 'uuid';
+import { v4 as uuidv4 } from 'uuid'
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: '2025-09-30.clover',
 })
 
 const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET!
+
+// ✅ Custom type that includes `shipping`
+type CheckoutSessionWithShipping = Stripe.Checkout.Session & {
+  shipping?: {
+    name?: string
+    address?: {
+      line1?: string
+      line2?: string
+      city?: string
+      state?: string
+      postal_code?: string
+      country?: string
+    }
+  }
+}
 
 export async function POST(req: NextRequest) {
   try {
@@ -18,22 +33,49 @@ export async function POST(req: NextRequest) {
     console.log('✅ Stripe event constructed:', event.type)
 
     if (event.type === 'checkout.session.completed') {
-      const session = event.data.object as Stripe.Checkout.Session & {
-        payment_intent: Stripe.PaymentIntent
+      const session = event.data.object as CheckoutSessionWithShipping
+
+      const customerName =
+        session.shipping?.name || session.customer_details?.name || 'Unknown'
+const email = session.customer_details?.email || ''
+const phone = session.customer_details?.phone || ''
+
+      const shippingAddress = session.shipping?.address
+
+      console.log('Customer Name:', customerName)
+      console.log('Shipping Address:', shippingAddress)
+
+      const formattedAddress = shippingAddress
+        ? [
+            shippingAddress.line1,
+            shippingAddress.line2,
+            [
+              shippingAddress.city,
+              shippingAddress.state,
+              shippingAddress.postal_code,
+            ]
+              .filter(Boolean)
+              .join(' '),
+            shippingAddress.country,
+          ]
+            .filter(Boolean)
+            .join('\n')
+        : 'No address provided'
+
+      const { userId, cartItems } = session.metadata ?? {}
+      const totalAmount = (session.amount_total ?? 0) / 100
+
+      if (!userId || !cartItems) {
+        console.error('❌ Missing userId or cartItems in metadata')
+        return NextResponse.json({ received: true })
       }
 
-      const paymentIntent = session.payment_intent as Stripe.PaymentIntent
-      const shipping = paymentIntent.shipping
-      const { userId, cartItems } = session.metadata!
-      const totalAmount = session.amount_total! / 100
-
       const parsedCartItems = JSON.parse(cartItems) as {
-        product: string // slug
+        product: string
         quantity: number
         price: number
       }[]
 
-      // ✅ Fetch product IDs by slug
       const slugs = parsedCartItems.map((item) => item.product)
       const sanityProducts = await client.fetch<
         Array<{ _id: string; slug: { current: string } }>
@@ -42,27 +84,19 @@ export async function POST(req: NextRequest) {
         { slugs }
       )
 
-      const slugToIdMap = sanityProducts.reduce((acc, product) => {
-        acc[product.slug.current] = product._id
-        return acc
-      }, {} as Record<string, string>)
-
-      console.log('🧩 Slug to ID map:', slugToIdMap)
-
       const items = parsedCartItems
         .map((item) => {
-          const productRef = slugToIdMap[item.product]
-
-          if (!productRef) {
-            console.error(`❌ No product found in Sanity for slug "${item.product}". Skipping item.`)
-            return null // Skip if no product found
+          const productId = item.product
+          if (!productId) {
+            console.error(`❌ No Sanity product found for slug "${item.product}"`)
+            return null
           }
 
           return {
-            _key: uuidv4(),  // Unique key for Sanity list items
+            _key: uuidv4(),
             product: {
               _type: 'reference',
-              _ref: productRef,  // <-- Use the actual product ID here
+              _ref: productId,
             },
             quantity: item.quantity,
             price: item.price,
@@ -70,29 +104,20 @@ export async function POST(req: NextRequest) {
         })
         .filter(Boolean)
 
-
-      console.log('🛒 Final items array to be sent to Sanity:', items)
-
       const order = {
         _type: 'order',
         userId,
-        userName: shipping?.name,
-        stripePaymentId: session.payment_intent?.toString(),
+        userName: customerName,
+        email,
+        phone,
+        stripePaymentId: session.payment_intent?.toString() ?? '',
         totalAmount,
-        shippingAddress: [
-          shipping?.address?.line1,
-          shipping?.address?.line2,
-          `${shipping?.address?.city}, ${shipping?.address?.state} ${shipping?.address?.postal_code}`,
-          shipping?.address?.country,
-        ]
-          .filter(Boolean)
-          .join('\n'),
+        shippingAddress: formattedAddress,
         items,
         status: 'Pending',
       }
 
       console.log('🧾 Creating order in Sanity:', order)
-
       const createdOrder = await client.create(order)
       console.log('✅ Order created successfully:', createdOrder._id)
     }
