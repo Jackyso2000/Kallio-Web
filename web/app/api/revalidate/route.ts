@@ -20,9 +20,9 @@ export async function POST(req: NextRequest) {
 
     // Revalidate the entire site if a hero or category is changed
     // Or revalidate the specific product page
-    revalidateTag(body._type)
+    revalidateTag(body._type, { expire: 0 })
     if (body.slug) {
-      revalidateTag(`${body._type}:${body.slug.current}`)
+      revalidateTag(`${body._type}:${body.slug.current}`, { expire: 0 })
     }
 
     return NextResponse.json({
