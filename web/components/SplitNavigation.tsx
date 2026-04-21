@@ -7,14 +7,12 @@ interface SplitNavigationProps {
   interiorBgImage?: string;
   furnitureBgImage?: string;
   interiorHref?: string;
-  furnitureHref?: string;
 }
 
 export default function SplitNavigation({
   interiorBgImage = '/images/interior-design.jpg',
   furnitureBgImage = '/images/furniture.jpg',
-  interiorHref = '/interior-design',
-  furnitureHref = '/catalog'
+  interiorHref = '/interior-design'
 }: SplitNavigationProps) {
   return (
     <div className="flex flex-col md:flex-row h-[85vh] md:h-screen w-full">
@@ -46,8 +44,7 @@ export default function SplitNavigation({
       </Link>
 
       {/* Furniture Tile */}
-      <Link
-        href={furnitureHref}
+      <div
         className="group relative w-full md:w-1/2 h-1/2 md:h-full overflow-hidden block"
       >
         <div
@@ -70,7 +67,7 @@ export default function SplitNavigation({
             Coming Soon
           </span>
         </div>
-      </Link>
+      </div>
     </div>
   )
 }

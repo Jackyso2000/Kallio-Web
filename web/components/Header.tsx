@@ -88,6 +88,7 @@ export default function Header() {
                       <li><Link href="/interior-design/services" className="block px-4 py-2 text-sm hover:bg-gray-100">Services</Link></li>
                       <li><Link href="/interior-design/portfolio" className="block px-4 py-2 text-sm hover:bg-gray-100">Portfolio</Link></li>
                       <li><Link href="/interior-design/about" className="block px-4 py-2 text-sm hover:bg-gray-100">About Us</Link></li>
+                      <li><Link href="/interior-design/journal" className="block px-4 py-2 text-sm hover:bg-gray-100">Journal</Link></li>
                     </ul>
                   </motion.div>
                 )}
