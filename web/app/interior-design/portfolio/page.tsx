@@ -1,15 +1,23 @@
 import Layout from '@/components/Layout'
 import Link from 'next/link'
+import { client } from '@/sanity/client'
 
-export default function PortfolioPage() {
-  const projects = [
-    { title: 'Modern Penthouse', slug: 'modern-penthouse', category: 'Residential', image: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?q=80&w=800&auto=format&fit=crop' },
-    { title: 'Minimalist Cafe', slug: 'minimalist-cafe', category: 'Commercial', image: 'https://images.unsplash.com/photo-1554118811-1e0d58224f24?q=80&w=800&auto=format&fit=crop' },
-    { title: 'Urban Loft', slug: 'urban-loft', category: 'Residential', image: 'https://images.unsplash.com/photo-1618219908412-a29a1bb7b86e?q=80&w=800&auto=format&fit=crop' },
-    { title: 'Boutique Hotel', slug: 'boutique-hotel', category: 'Commercial', image: 'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?q=80&w=800&auto=format&fit=crop' },
-    { title: 'Coastal Villa', slug: 'coastal-villa', category: 'Residential', image: 'https://images.unsplash.com/photo-1615874959474-d609969a24d4?q=80&w=800&auto=format&fit=crop' },
-    { title: 'Creative Studio', slug: 'creative-studio', category: 'Commercial', image: 'https://images.unsplash.com/photo-1524758631624-e2822e304c36?q=80&w=800&auto=format&fit=crop' },
-  ]
+interface PortfolioStub {
+  title: string
+  slug: string
+  category: string
+  image: string
+}
+
+const PORTFOLIO_QUERY = `*[_type == "portfolio"] | order(year desc) {
+  title,
+  "slug": slug.current,
+  category,
+  "image": heroImage.asset->url
+}`
+
+export default async function PortfolioPage() {
+  const projects = await client.fetch<PortfolioStub[]>(PORTFOLIO_QUERY)
 
   return (
     <Layout>

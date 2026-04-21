@@ -18,7 +18,6 @@ export default async function Home() {
         interiorBgImage="https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?q=80&w=2000&auto=format&fit=crop"
         furnitureBgImage="https://images.unsplash.com/photo-1538688525198-9b88f6f53126?q=80&w=2000&auto=format&fit=crop"
         interiorHref="/interior-design"
-        furnitureHref="/catalog"
       />
 
       {/* Interior Design Services Section */}
