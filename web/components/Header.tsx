@@ -32,6 +32,7 @@ export default function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [isInteriorOpen, setIsInteriorOpen] = useState(false)
   const [isCatalogOpen, setIsCatalogOpen] = useState(false)
+  const [isMobileInteriorOpen, setIsMobileInteriorOpen] = useState(false)
   const [categories, setCategories] = useState<Category[]>([])
 
   const { cartCount } = useCart()
@@ -212,11 +213,43 @@ export default function Header() {
             transition={{ duration: 0.3, ease: 'easeInOut' }}
             className="md:hidden fixed inset-0 z-40 bg-[#680c09]/95 backdrop-blur-lg flex flex-col items-center justify-center"
           >
-            <nav className="flex flex-col items-center gap-8">
+            <nav className="flex flex-col items-center gap-6 w-full">
               <Link href="/" className="text-2xl text-brand-text hover:text-black" onClick={() => setIsMobileMenuOpen(false)}>Home</Link>
-              <div className="flex flex-col items-center gap-4 my-4">
-                <Link href="/interior-design" className="text-2xl text-brand-text hover:text-black" onClick={() => setIsMobileMenuOpen(false)}>Interior Design</Link>
-                {/* <Link href="/catalog" className="text-2xl text-brand-text hover:text-black" onClick={() => setIsMobileMenuOpen(false)}>Furniture</Link> */}
+              
+              <div className="flex flex-col items-center w-full">
+                <button
+                  type="button"
+                  onClick={() => setIsMobileInteriorOpen(!isMobileInteriorOpen)}
+                  className="flex items-center justify-center gap-2 text-2xl text-brand-text hover:text-white transition-colors"
+                >
+                  <span>
+                    Interior Design
+                  </span>
+                  <svg
+                    className={`w-6 h-6 transition-transform duration-300 ${isMobileInteriorOpen ? 'rotate-180' : ''}`}
+                    fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+                  </svg>
+                </button>
+                <AnimatePresence>
+                  {isMobileInteriorOpen && (
+                    <motion.div
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: 'auto', opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      className="overflow-hidden w-full" // This wrapper is kept for the animation
+                    >
+                      <div className="flex flex-col items-center gap-5 mt-6 pt-6 border-t border-brand-text/20">
+                        <Link href="/interior-design" className="text-xl text-brand-text/80 hover:text-white" onClick={() => setIsMobileMenuOpen(false)}>Overview</Link>
+                        <Link href="/interior-design/services" className="text-xl text-brand-text/80 hover:text-white" onClick={() => setIsMobileMenuOpen(false)}>Services</Link>
+                        <Link href="/interior-design/portfolio" className="text-xl text-brand-text/80 hover:text-white" onClick={() => setIsMobileMenuOpen(false)}>Portfolio</Link>
+                        <Link href="/interior-design/about" className="text-xl text-brand-text/80 hover:text-white" onClick={() => setIsMobileMenuOpen(false)}>About Us</Link>
+                        <Link href="/interior-design/journal" className="text-xl text-brand-text/80 hover:text-white" onClick={() => setIsMobileMenuOpen(false)}>Journal</Link>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </div>
               <Link href="/contact" className="text-2xl text-brand-text hover:text-black" onClick={() => setIsMobileMenuOpen(false)}>Contact</Link>
             </nav>
